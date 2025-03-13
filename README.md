@@ -2,7 +2,7 @@
 TFG
 
 ## Cosas por hacer 
--Planificación
+- Planificación
 - **Base de Datos**
 - Diseño
 
