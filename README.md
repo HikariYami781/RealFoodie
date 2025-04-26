@@ -23,9 +23,9 @@ Ideas en [este repositorio](https://github.com).
 - Foto Modelo Relacional [Hecho]
 - Script Prueba BBDD [Hecho]
 
-- Tengo que añadir en el Header el Perfil
-- Comentarios, favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o 
-guardarla en la colección, seguidores
+- Logo Página web -> No lo pilla la pestaña web
+- Configurar Perfil
+- Comentarios, favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida/ Notificaciones
 

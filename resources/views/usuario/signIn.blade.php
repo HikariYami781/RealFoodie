@@ -12,7 +12,7 @@
             background-position: center;
             background-repeat: no-repeat;
             background-attachment: fixed;
-            min-height: 100vh;
+            min-height: 90vh;
             margin: 0;
             padding: 0;
         }
