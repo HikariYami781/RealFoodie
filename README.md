@@ -19,6 +19,7 @@ Ideas en [este repositorio](https://github.com).
 
 ## Cosas por hacer 
 - Subir a Visual Código Proyecto [Hecho]
+- Imágenes vistas en la memoria [Faltan Fotos]
 - Entregar Memoria Parte 1 y 2 + link Proyecto en la próxima entrega
 - Foto Modelo Relacional [Hecho]
 - Script Prueba BBDD [Hecho]
