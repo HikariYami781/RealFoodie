@@ -1,10 +1,14 @@
 # RealFoodie
 Tecnologías que se van a usar:
 
-• Backend: Laravel como framework PHP para el desarrollo del servidor y la lógica de negocio. 
+• Backend: Laravel como framework PHP para el desarrollo del servidor y la lógica de negocio.
+
 • Frontend: HTML5, CSS3, JavaScript y Bootstrap5 para crear una interfaz responsiva y atractiva. 
+
 • Base de datos: MySQL para el almacenamiento persistente de la información. 
+
 • Autenticación: Sistema de autenticación integrado de Laravel (Laravel Breeze). 
+
 • Almacenamiento de imágenes: Laravel Storage. 
 
 • Búsqueda: Laravel Scout con Algolia para implementar búsquedas eficientes y rápidas.  -> He encontrado una forma más simple de poder implementar las búsquedas sin necesidad de usar esta tecnología
@@ -26,7 +30,8 @@ Ideas en [este repositorio](https://github.com).
 
 - Logo Página web -> No lo pilla la pestaña web
 - Configurar Perfil
-- Comentarios, favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
+- Comentarios [Hecho]
+- Favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida/ Notificaciones
 

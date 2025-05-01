@@ -20,7 +20,6 @@ Route::get('/home', [RecetaController::class, 'index'])->name('home');
 Route::get('/buscar', [RecetaController::class, 'search'])->name('recetas.search');
 
 // Rutas de autenticación (generadas por Laravel Breeze)
-
 // Autenticación
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
@@ -42,8 +41,10 @@ Route::post('/recetas/{receta}/valorar', [RecetaController::class, 'rate'])->nam
 //Ingredientes
 Route::get('/ingredientes/{ingrediente}', [IngredienteController::class, 'show'])->name('ingredientes.show');
 
-// Comentarios (Aún no está acabado)
+
+// Comentarios
 Route::post('/recetas/{receta}/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store')->middleware('auth');
+Route::put('/comentarios/{comentario}', [ComentarioController::class, 'update'])->name('comentarios.update')->middleware('auth');
 Route::delete('/comentarios/{comentario}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy')->middleware('auth');
 
 // Colecciones (Aún no está acabado)
@@ -57,7 +58,7 @@ Route::delete('/colecciones/{coleccion}', [ColeccionController::class, 'destroy'
 Route::post('/colecciones/{coleccion}/recetas', [ColeccionController::class, 'addReceta'])->name('colecciones.addReceta')->middleware('auth');
 Route::delete('/colecciones/{coleccion}/recetas/{receta}', [ColeccionController::class, 'removeReceta'])->name('colecciones.removeReceta')->middleware('auth');
 
-//Consultas (Aún no está acabado)
+//Consultas
 Route::get('/consultas', [ConsultasController::class, 'index'])->name('consultas.index')->middleware('auth');
 Route::get('/consultas/recetas-fecha', [ConsultasController::class, 'recetasPorFecha'])->name('consultas.recetas-fecha')->middleware('auth');
 Route::get('/consultas/recetas-ingredientes', [ConsultasController::class, 'recetasPorIngredientes'])->name('consultas.recetas-ingredientes')->middleware('auth');
