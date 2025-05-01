@@ -74,10 +74,10 @@ Route::get('/usuarios/{user}/seguidores', [UserController::class, 'followers'])-
 Route::get('/usuarios/{user}/siguiendo', [UserController::class, 'following'])->name('users.following');
 
 //Perfil
-Route::get('/perfil', [UserController::class, 'showProfile'])->name('profile.show')->middleware('auth');
-Route::put('/perfil', [UserController::class, 'update'])->name('profile.update')->middleware('auth');
-Route::get('/perfil/editar', [UserController::class, 'edit'])->name('profile.edit')->middleware('auth');
-Route::put('/perfil/password', [UserController::class, 'updatePassword'])->name('profile.updatePassword')->middleware('auth');
+Route::get('/perfil', [ProfileController::class, 'show'])->name('profile.show')->middleware('auth');
+Route::put('/perfil', [ProfileController::class, 'update'])->name('profile.update')->middleware('auth');
+Route::get('/perfil/editar', [ProfileController::class, 'edit'])->name('profile.edit')->middleware('auth');
+Route::put('/perfil/password', [ProfileController::class, 'updatePassword'])->name('profile.updatePassword')->middleware('auth');
 Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy')->middleware('auth');
 
 Route::get('/dashboard', function () {
