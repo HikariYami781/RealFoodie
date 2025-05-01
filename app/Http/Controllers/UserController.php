@@ -12,10 +12,19 @@ class UserController extends Controller
 {
     public function show(User $user)
     {
-        $user->load('recetas.categoria');
+        $user->load(['recetas.categoria', 'recetas.valoraciones', 'recetas.user', 'recetasFavoritas.user', 'recetasFavoritas.valoraciones', 'colecciones']);
         $recetas = $user->recetas()->where('publica', true)->paginate(9);
         
-        return view('recetas.usu', compact('user', 'recetas'));
+        return view('profile.show', compact('user', 'recetas'));
+    }
+
+    public function showProfile()
+    {
+        $user = auth()->user();
+        $user->load(['recetas.categoria', 'recetas.valoraciones', 'recetas.user', 'recetasFavoritas.user', 'recetasFavoritas.valoraciones', 'colecciones']);
+        $recetas = $user->recetas()->where('publica', true)->paginate(9);
+        
+        return view('profile.show', compact('user', 'recetas'));
     }
     
     public function edit()

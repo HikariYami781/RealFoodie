@@ -19,8 +19,8 @@
             
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link">Perfil</a>
-                    <!--Me falta poner los iconos y el link a la página-->
+                    <a class="nav-link" href="{{ route('profile.show') }}">Perfil</a>
+                    <!--Me falta poner los iconos-->
                 </li>
 
                 <li class="nav-item">

@@ -3,6 +3,7 @@ use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\ColeccionController;
 use App\Http\Controllers\RecetaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ConsultasController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\IngredienteController;
@@ -66,16 +67,24 @@ Route::get('/consultas/recetas-por-ingredientes', [ConsultasController::class, '
 Route::get('/consultas/usuarios-activos', [ConsultasController::class, 'usuariosActivos'])->name('consultas.usuarios-activos')->middleware('auth');
 Route::get('/consultas/ingredientes-populares', [ConsultasController::class, 'ingredientesPopulares'])->name('consultas.ingredientes-populares')->middleware('auth');
 
-// Usuarios (Aún no está acabado)
+// Usuarios
 Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show');
-Route::get('/perfil/editar', [UserController::class, 'edit'])->name('profile.edit')->middleware('auth');
-Route::put('/perfil', [UserController::class, 'update'])->name('profile.update')->middleware('auth');
-Route::put('/perfil/password', [UserController::class, 'updatePassword'])->name('profile.updatePassword')->middleware('auth');
 Route::post('/usuarios/{user}/seguir', [UserController::class, 'toggleFollow'])->name('users.toggleFollow')->middleware('auth');
 Route::get('/usuarios/{user}/seguidores', [UserController::class, 'followers'])->name('users.followers');
 Route::get('/usuarios/{user}/siguiendo', [UserController::class, 'following'])->name('users.following');
-Route::post('/logout', function () {
-    Auth::logout();
+
+//Perfil
+Route::get('/perfil', [UserController::class, 'showProfile'])->name('profile.show')->middleware('auth');
+Route::put('/perfil', [UserController::class, 'update'])->name('profile.update')->middleware('auth');
+Route::get('/perfil/editar', [UserController::class, 'edit'])->name('profile.edit')->middleware('auth');
+Route::put('/perfil/password', [UserController::class, 'updatePassword'])->name('profile.updatePassword')->middleware('auth');
+Route::delete('/perfil', [ProfileController::class, 'destroy'])->name('profile.destroy')->middleware('auth');
+
+Route::get('/dashboard', function () {
+    return redirect()->route('home');
+})->middleware(['auth'])->name('dashboard');
+
+Route::post('/logout', function () {Auth::logout();
     request()->session()->invalidate();
     request()->session()->regenerateToken();
     return redirect('/');

@@ -29,7 +29,7 @@ Ideas en [este repositorio](https://github.com).
 - Script Prueba BBDD [Hecho]
 
 - Logo Página web -> No lo pilla la pestaña web
-- Configurar Perfil
+- Perfil
 - Comentarios [Hecho]
 - Favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
