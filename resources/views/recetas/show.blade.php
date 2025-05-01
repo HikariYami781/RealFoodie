@@ -71,7 +71,7 @@
                             <p>{{ $receta->user->name }}</p>
                         </div>
 
-                        
+
                         <div class="mb-4">
                             <h4>Descripción</h4>
                             <p class="card-text">{{ $receta->descripcion }}</p>
@@ -215,7 +215,7 @@
                             @forelse($receta->comentarios->sortByDesc('fecha') as $comentario)
                                 <div class="comentario mb-3 p-3 border rounded bg-light">
                                     <div class="d-flex justify-content-between">
-                                        <h5><a href="{{ route('users.show', $comentario->user) }}" class="text-decoration-none">{{ $comentario->user->name }}</a></h5>
+                                        <h5><a href="{{ route('users.show', $comentario->user) }}" class="text-decoration-none">{{ $comentario->user->nombre }}</a></h5>
                                         <small class="text-muted">{{ $comentario->fecha->format('d/m/Y H:i') }}</small>
                                     </div>
                                     
