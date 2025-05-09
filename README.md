@@ -16,7 +16,7 @@ Tecnologías que se van a usar:
 • Control de versiones: Git y GitHub para el seguimiento del desarrollo. 
 • Cache: Redis para mejorar el rendimiento de la aplicación.  -> Muchos errores a la hora de sincronizar la BD NoSQL y MySQL
 
-• Procesamiento de imágenes: Intervention Image para manipulación y optimización de imágenes (?)
+• Procesamiento de imágenes: Intervention Image para manipulación y optimización de imágenes -> Con el Storage que nos proporciona Laravel, no es necesario
 
 
 Ideas en [este repositorio](https://github.com).
