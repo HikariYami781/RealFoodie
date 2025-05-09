@@ -1,152 +1,174 @@
-<x-layout>
-    <x-slot name="title">
-        Editar Perfil
-    </x-slot>
-    
-    <x-slot name="content">
-        <h1 class="text-2xl font-bold mb-6">Editar Perfil</h1>
-        
-        <!-- Editar -->
-        <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data">
-            @csrf
-            @method('put')
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <div class="row mb-5 justify-content-center">
+        <div class="col-md-10">
+            <h2 class="text-center mb-4">Editar Perfil</h2>
             
-            <div class="mb-4">
-                <label for="nombre" class="block text-gray-700 mb-2">Nombre</label>
-                <input type="text" id="nombre" name="nombre" value="{{ old('nombre', $user->nombre) }}" 
-                       class="w-full px-3 py-2 border rounded">
-                @error('nombre')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="mb-4">
-                <label for="email" class="block text-gray-700 mb-2">Email</label>
-                <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}" 
-                       class="w-full px-3 py-2 border rounded">
-                @error('email')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="mb-4">
-                <label for="descripcion" class="block text-gray-700 mb-2">Descripción</label>
-                <textarea id="descripcion" name="descripcion" class="w-full px-3 py-2 border rounded" rows="3">{{ old('descripcion', $user->descripcion ?? '') }}</textarea>
-                @error('descripcion')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="mb-4">
-                <label for="foto_perfil" class="block text-gray-700 mb-2">Foto de Perfil</label>
-                <input type="file" id="foto_perfil" name="foto_perfil" class="w-full">
-                @error('foto_perfil')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-                
-                @if(isset($user->foto_perfil) && $user->foto_perfil)
-                    <div class="mt-2">
-                        <img src="{{ asset('storage/fotos_perfil/' . $user->foto_perfil) }}" 
-                             alt="Foto de perfil" class="h-20 w-20 rounded-full object-cover">
-                    </div>
-                @endif
-            </div>
-            
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-                Guardar
-            </button>
-        </form>
-        
-        <!-- Actualizar Contraseña-->
-        <div class="mt-8">
-            <h2 class="text-xl font-bold mb-4">Actualizar Contraseña</h2>
-            
-            <form method="post" action="{{ route('profile.updatePassword') }}">
-                @csrf
-                @method('put')
-                
-                <div class="mb-4">
-                    <label for="current_password" class="block text-gray-700 mb-2">Contraseña Actual</label>
-                    <input type="password" id="current_password" name="current_password" 
-                           class="w-full px-3 py-2 border rounded">
-                    @error('current_password')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div class="mb-4">
-                    <label for="password" class="block text-gray-700 mb-2">Nueva Contraseña</label>
-                    <input type="password" id="password" name="password" 
-                           class="w-full px-3 py-2 border rounded">
-                    @error('password')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                
-                <div class="mb-4">
-                    <label for="password_confirmation" class="block text-gray-700 mb-2">Confirmar Contraseña</label>
-                    <input type="password" id="password_confirmation" name="password_confirmation" 
-                           class="w-full px-3 py-2 border rounded">
-                </div>
-                
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-                    Actualizar Contraseña
-                </button>
-            </form>
-        </div>
-        
-        <!-- Sección para eliminar cuenta -->
-        <div class="mt-8 pt-8 border-t">
-            <h2 class="text-xl font-bold mb-4 text-red-600">Eliminar Cuenta</h2>
-            
-            <p class="mb-4 text-gray-600">
-                Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán permanentemente borrados.
-                Antes de eliminar tu cuenta, por favor descarga cualquier dato o información que desees conservar.
-            </p>
-            
-            <button type="button" 
-                    class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
-                    onclick="document.getElementById('confirm-delete-modal').classList.remove('hidden')">
-                Eliminar Cuenta
-            </button>
-            
-            <!--confirmar eliminación -->
-            <div id="confirm-delete-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-                <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-                    <h3 class="text-lg font-bold mb-4">¿Estás seguro de que quieres eliminar tu cuenta?</h3>
+            <!-- Sección para editar perfil -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Información personal</h3>
                     
-                    <p class="mb-4 text-gray-600">
-                        Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán permanentemente borrados.
-                        Por favor, ingresa tu contraseña para confirmar que deseas eliminar permanentemente tu cuenta.
-                    </p>
-                    
-                    <form method="post" action="{{ route('profile.destroy') }}">
+                    <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data">
                         @csrf
-                        @method('delete')
+                        @method('put')
                         
-                        <div class="mb-4">
-                            <label for="delete_password" class="sr-only">Contraseña</label>
-                            <input type="password" id="delete_password" name="password" 
-                                   class="w-full px-3 py-2 border rounded" placeholder="Contraseña">
-                            @error('password')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                value="{{ old('nombre', $user->nombre) }}">
+                            @error('nombre')
+                                <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
                         </div>
                         
-                        <div class="flex justify-end">
-                            <button type="button" 
-                                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded mr-2"
-                                    onclick="document.getElementById('confirm-delete-modal').classList.add('hidden')">
-                                Cancelar
-                            </button>
-                            
-                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
-                                Eliminar Cuenta
-                            </button>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                value="{{ old('email', $user->email) }}">
+                            @error('email')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
                         </div>
+                        
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" 
+                                rows="3">{{ old('descripcion', $user->descripcion ?? '') }}</textarea>
+                            @error('descripcion')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="foto_perfil" class="form-label">Foto de Perfil</label>
+                            <input type="file" class="form-control" id="foto_perfil" name="foto_perfil">
+                            @error('foto_perfil')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                            
+                            @if(isset($user->foto_perfil) && $user->foto_perfil)
+                                <div class="mt-2">
+                                    <img src="{{ asset('storage/fotos_perfil/' . $user->foto_perfil) }}" 
+                                        alt="Foto de perfil" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i>Guardar
+                        </button>
+                        
+                        @if (session('status') === 'profile-updated')
+                            <div class="alert alert-success mt-3" role="alert">
+                                Perfil actualizado correctamente.
+                            </div>
+                        @endif
                     </form>
                 </div>
             </div>
+
+            <!-- Sección para actualizar contraseña -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Actualizar Contraseña</h3>
+                    
+                    <form method="post" action="{{ route('profile.updatePassword') }}">
+                        @csrf
+                        @method('put')
+                        
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Contraseña Actual</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password">
+                            @error('current_password')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Nueva Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                            @error('password')
+                                <div class="text-danger mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password_confirmation" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-lock me-1"></i>Actualizar Contraseña
+                        </button>
+                        
+                        @if (session('success'))
+                            <div class="alert alert-success mt-3" role="alert">
+                                {{ session('success') }}
+                            </div>
+                        @endif
+                    </form>
+                </div>
+            </div>
+
+            <!-- Sección para eliminar cuenta -->
+            <div class="card border-danger">
+                <div class="card-body">
+                    <h3 class="card-title text-danger mb-4">Eliminar Cuenta</h3>
+                    
+                    <p class="mb-4 text-muted">
+                        Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán permanentemente borrados.
+                        Antes de eliminar tu cuenta, por favor descarga cualquier dato o información que desees conservar.
+                    </p>
+                    
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                        <i class="fas fa-trash-alt me-1"></i>Eliminar Cuenta
+                    </button>
+                    
+                    <!-- Modal para confirmar eliminación -->
+                    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteAccountModalLabel">Confirmar eliminación</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>¿Estás seguro de que quieres eliminar tu cuenta?</p>
+                                    <p class="text-muted small">Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán permanentemente borrados.
+                                    Por favor, ingresa tu contraseña para confirmar que deseas eliminar permanentemente tu cuenta.</p>
+                                    
+                                    <form id="delete-account-form" method="post" action="{{ route('profile.destroy') }}">
+                                        @csrf
+                                        @method('delete')
+                                        
+                                        <div class="mb-3">
+                                            <label for="delete-password" class="form-label">Contraseña</label>
+                                            <input type="password" class="form-control" id="delete-password" name="password">
+                                            @error('password', 'userDeletion')
+                                                <div class="text-danger mt-1">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" form="delete-account-form" class="btn btn-danger">Eliminar Cuenta</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ route('users.show', Auth::user()) }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Volver a mi perfil
+                </a>
+            </div>
         </div>
-    </x-slot>
-</x-layout>
+    </div>
+</div>
+@endsection
