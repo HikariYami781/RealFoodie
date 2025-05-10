@@ -24,12 +24,12 @@ Ideas en [este repositorio](https://github.com).
 ## Cosas por hacer 
 - Subir a Visual Código Proyecto [Hecho]
 - Imágenes vistas en la memoria [Faltan Fotos]
-- Entregar Memoria Parte 1 y 2 + link Proyecto en la próxima entrega
+- Entregar lo que queda de Memoria, más actualizada, y link proyecto
 - Foto Modelo Relacional [Hecho]
 - Script Prueba BBDD [Hecho]
 
 - Logo Página web -> No lo pilla la pestaña web
-- Perfil -> Me este error [Undefined variable $slot] No queremos usar esta variable
+- Perfil -> No soncigo ver las vistas, pero están implementadas
 - Comentarios [Hecho]
 - Favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
