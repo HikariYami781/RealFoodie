@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -29,7 +30,6 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        // Mantener la implementación exacta del método original
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
@@ -49,25 +49,51 @@ class ProfileController extends Controller
             'foto_perfil' => 'nullable|image|max:2048',
         ]);
         
-        if ($request->hasFile('foto_perfil')) {
-            // Eliminar foto anterior si existe
-            if ($user->foto_perfil) {
-                Storage::delete('public/fotos_perfil/' . $user->foto_perfil);
+        try {
+            // Extraer datos validados para actualizar el usuario
+            $dataToUpdate = [
+                'nombre' => $validatedData['nombre'],
+                'email' => $validatedData['email'],
+                'descripcion' => $validatedData['descripcion'] ?? $user->descripcion,
+            ];
+            
+            // Verificar si hay archivo y es válido
+            if ($request->hasFile('foto_perfil') && $request->file('foto_perfil')->isValid()) {
+                // Eliminar foto anterior si existe
+                if ($user->foto_perfil) {
+                    Storage::disk('public')->delete('fotos_perfil/' . $user->foto_perfil);
+                }
+                
+                // Generar un nombre único para el archivo
+                $filename = time() . '_' . $request->file('foto_perfil')->getClientOriginalName();
+                
+                // Almacenar el archivo en el disco público (no incluir 'public/' en la ruta)
+                $request->file('foto_perfil')->storeAs('fotos_perfil', $filename, 'public');
+                
+                // Actualizar el nombre del archivo en la base de datos
+                $dataToUpdate['foto_perfil'] = $filename;
+                
+                // Registrar éxito para depuración
+                Log::info('Archivo subido correctamente: ' . $filename);
             }
             
-            $fotoPath = $request->file('foto_perfil')->store('public/fotos_perfil');
-            $validatedData['foto_perfil'] = basename($fotoPath);
+            // Verificar si el email ha cambiado
+            if ($user->email !== $validatedData['email']) {
+                $dataToUpdate['email_verified_at'] = null;
+            }
+            
+            // Actualizar el usuario
+            $user->update($dataToUpdate);
+            
+            return Redirect::route('profile.edit')->with('status', 'profile-updated');
+        } catch (\Exception $e) {
+            // Registrar el error para depuración
+            Log::error('Error al actualizar el perfil: ' . $e->getMessage());
+            
+            return Redirect::route('profile.edit')->withErrors([
+                'foto_perfil' => 'Hubo un problema al subir la imagen: ' . $e->getMessage()
+            ]);
         }
-        
-        $user->fill($validatedData);
-        
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-        
-        $user->save();
-        
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**

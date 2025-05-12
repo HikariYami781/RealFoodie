@@ -42,12 +42,18 @@
                             @enderror
                         </div>
                         
+                        
                         <div class="mb-4">
                             <label for="foto_perfil" class="form-label">Foto de Perfil</label>
-                            <input type="file" class="form-control" id="foto_perfil" name="foto_perfil">
+                            <input type="file" class="form-control @error('foto_perfil') is-invalid @enderror" id="foto_perfil" name="foto_perfil" accept="image/*">
+                            
                             @error('foto_perfil')
-                                <div class="text-danger mt-1">{{ $message }}</div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
+                            
+                            <div class="form-text mt-1">
+                                Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 2MB.
+                            </div>
                             
                             @if(isset($user->foto_perfil) && $user->foto_perfil)
                                 <div class="mt-2">

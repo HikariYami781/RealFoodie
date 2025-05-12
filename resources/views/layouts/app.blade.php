@@ -17,6 +17,27 @@
     
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        main {
+            flex: 1 0 auto;
+        }
+        
+        footer {
+            flex-shrink: 0;
+        }
+    </style>
 </head>
 <body>
     <!-- Incluir el header -->
@@ -30,7 +51,7 @@
     <!-- Incluir el footer -->
     @include('footer')
 
-    <!-- Bootstrap JS - Importante para que funcione el dropdown -->
+    <!-- Bootstrap JS- Dropdown -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

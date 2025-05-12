@@ -29,7 +29,7 @@ Ideas en [este repositorio](https://github.com).
 - Script Prueba BBDD [Hecho]
 
 - Logo Página web -> No lo pilla la pestaña web
-- Perfil -> Corregir el tema de la foto y diseño de ambas vistas
+- Perfil -> Diseño de ambas vistas
 - Comentarios [Hecho]
 - Favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
@@ -38,7 +38,9 @@ Ideas en [este repositorio](https://github.com).
 
 
 ## Solventar Errores
-- Puedo entrar a la página principal sin necesidad de logear -> si pongo /home 
+- Puedo entrar a la página principal sin necesidad de logear -> si pongo /home
+- La foto de perfil del usuario no carga
+- foto de la receta no aparece
 
 
 ## Mejoras
