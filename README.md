@@ -40,7 +40,7 @@ Ideas en [este repositorio](https://github.com).
 ## Solventar Errores
 - Puedo entrar a la página principal sin necesidad de logear -> si pongo /home
 - La foto de perfil del usuario no carga
-- foto de la receta no aparece
+- foto de la receta no aparece en el perfil del usuario
 
 
 ## Mejoras
