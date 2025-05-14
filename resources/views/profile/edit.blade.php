@@ -52,7 +52,7 @@
                             @enderror
                             
                             <div class="form-text mt-1">
-                                Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 2MB.
+                                Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 10MB.
                             </div>
                             
                             @if(isset($user->foto_perfil) && $user->foto_perfil)

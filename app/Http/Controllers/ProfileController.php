@@ -46,11 +46,11 @@ class ProfileController extends Controller
             'nombre' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'descripcion' => 'nullable|string',
-            'foto_perfil' => 'nullable|image|max:2048',
+            'foto_perfil' => 'nullable|image|max:10240',
         ]);
         
         try {
-            // Extraer datos validados para actualizar el usuario
+            //Actualizar el usuario
             $dataToUpdate = [
                 'nombre' => $validatedData['nombre'],
                 'email' => $validatedData['email'],
@@ -67,13 +67,12 @@ class ProfileController extends Controller
                 // Generar un nombre único para el archivo
                 $filename = time() . '_' . $request->file('foto_perfil')->getClientOriginalName();
                 
-                // Almacenar el archivo en el disco público (no incluir 'public/' en la ruta)
+                // Almacenar el archivo
                 $request->file('foto_perfil')->storeAs('fotos_perfil', $filename, 'public');
                 
-                // Actualizar el nombre del archivo en la base de datos
+                // Actualizar el nombre en la base de datos
                 $dataToUpdate['foto_perfil'] = $filename;
                 
-                // Registrar éxito para depuración
                 Log::info('Archivo subido correctamente: ' . $filename);
             }
             

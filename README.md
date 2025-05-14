@@ -39,13 +39,13 @@ Ideas en [este repositorio](https://github.com).
 
 ## Solventar Errores
 - Puedo entrar a la página principal sin necesidad de logear -> si pongo /home
-- La foto de perfil del usuario no carga
 - foto de la receta no aparece en el perfil del usuario
+- Puedo volver atrás en el navegador y no debería poder
 
 
 ## Mejoras
 - Header / ponerlo en todas las vistas
-- Footer 
+- Footer (En algunas vistas no va a estar presente)
 - Background Image -Welcome Subir resolución
 - Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal 
 - Que aparezca el nombre del usuario que las ha creado con la foto y puedes ir a su perfil (Recetas)
