@@ -101,15 +101,22 @@
                                     @foreach($recetas as $receta)
                                         <div class="col">
                                             <div class="card h-100">
-                                                @if($receta->imagen)
-                                                    <img src="{{ asset('storage/recetas/' . $receta->imagen) }}" 
+                                            @if($receta->imagen)
+                                                <!--En caso de que se este guardando la carpeta recetas-->
+                                                @if(strpos($receta->imagen, 'recetas/') === 0)
+                                                    <img src="{{ '/storage/' . $receta->imagen }}" 
                                                         class="card-img-top" alt="{{ $receta->titulo }}" 
                                                         style="height: 180px; object-fit: cover;">
                                                 @else
-                                                    <div class="bg-light text-center pt-4" style="height: 180px;">
-                                                        <i class="fas fa-utensils fa-4x text-muted"></i>
-                                                    </div>
+                                                    <img src="{{ '/storage/recetas/' . $receta->imagen }}" 
+                                                        class="card-img-top" alt="{{ $receta->titulo }}" 
+                                                        style="height: 180px; object-fit: cover;">
                                                 @endif
+                                            @else
+                                                <div class="bg-light text-center pt-4" style="height: 180px;">
+                                                    <i class="fas fa-utensils fa-4x text-muted"></i>
+                                                </div>
+                                            @endif
                                                 
                                                 <div class="card-body">
                                                     <h5 class="card-title">{{ $receta->titulo }}</h5>
