@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('coccion');
             $table->date('fecha_publicacion')->nullable();
             $table->integer('porciones');
-            $table->boolean('publica')->default(false);
+            $table->boolean('publica')->default(true);
             $table->timestamps();
         });
     }

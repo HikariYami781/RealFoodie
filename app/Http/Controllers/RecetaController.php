@@ -15,7 +15,7 @@ class RecetaController extends Controller
     {
         $recetas = Receta::where('publica', true)
                 ->orderBy('fecha_publicacion', 'desc')
-                ->with(['user', 'categoria'])
+                ->with(['user', 'categoria', 'valoraciones'])
                 ->take(3)
                 ->paginate(6);
         
@@ -88,6 +88,8 @@ public function show(Receta $receta)
             'categoria_id' => $request->categoria_id,
             'porciones' => $request->porciones,      
             'user_id' => auth()->id(),
+            'publica' => true, 
+            'fecha_publicacion' => now()
         ]);
     
         // Procesar imagen
@@ -171,8 +173,7 @@ public function edit(Receta $receta)
         'coccion' => $request->coccion ?? $receta->coccion,
         'dificultad' => $request->dificultad ?? $receta->dificultad,
         'porciones' => $request->porciones ?? $receta->porciones,
-        'categoria_id' => $request->categoria_id ?? $receta->categoria_id,
-        'publica' => $request->has('publica') ? true : false
+        'categoria_id' => $request->categoria_id ?? $receta->categoria_id
     ]);
     
     // Procesar la imagen si se ha subido una nueva

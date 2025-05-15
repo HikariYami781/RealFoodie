@@ -39,7 +39,6 @@ Ideas en [este repositorio](https://github.com).
 
 ## Solventar Errores
 - Puedo entrar a la página principal sin necesidad de logear -> si pongo /home
-- foto de la receta no aparece en el perfil del usuario
 - Puedo volver atrás en el navegador y no debería poder
 
 

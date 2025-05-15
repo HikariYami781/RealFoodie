@@ -145,13 +145,6 @@
             @enderror
         </div>
 
-        <!-- Publicar -->
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="publica" name="publica" 
-                   {{ old('publica', $receta->publica) ? 'checked' : '' }}>
-            <label class="form-check-label" for="publica">Publicar receta</label>
-        </div>
-
         <!-- Ingredientes -->
         <div class="mb-3">
             <label class="form-label">Ingredientes</label>
