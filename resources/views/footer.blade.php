@@ -1,5 +1,5 @@
-<footer class="bg-dark text-white py-3 mt-5">
+<footer class="footer mt-auto py-2 bg-dark text-white">
     <div class="container text-center">
-        <p class="mb-0"> {{ date('Y') }} RealFoodie-Trabajo realizado por Paula</p>
+        <p class="mb-0">{{ date('Y') }} RealFoodie-Trabajo realizado por Paula</p>
     </div>
 </footer>

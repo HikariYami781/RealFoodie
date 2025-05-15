@@ -68,7 +68,7 @@
                         
                         <div class="mb-3">
                             <h5>Autor</h5>
-                            <p>{{ $receta->user->name }}</p>
+                            <p>{{ $receta->user->nombre }}</p>
                         </div>
 
 
