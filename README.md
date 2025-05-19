@@ -29,7 +29,7 @@ Ideas en [este repositorio](https://github.com).
 - Script Prueba BBDD [Hecho]
 
 - Logo Página web -> No lo pilla la pestaña web
-- Perfil -> Diseño de ambas vistas
+- Perfil [Hecho]
 - Comentarios [Hecho]
 - Favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
@@ -48,11 +48,9 @@ Ideas en [este repositorio](https://github.com).
 - Background Image -Welcome Subir resolución
 - Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal 
 - Que aparezca el nombre del usuario que las ha creado con la foto y puedes ir a su perfil (Recetas)
-- Comentarios (idea)-> Especie de carrousel abajo de la receta cuando pulsas en ver detalles, con los comentarios y la   
-  valoración con el nombre de la persona y su foto de perfil
-- Cuando vayas a ver las recetas de los usuarios más activos e ingredientes más usados, que puedas pulsarlas y te lleven 
-  a la receta (Quizás que se vea también la imagen)
-- Quizás añadir filtros para el buscador
+- Poner los Comentarios con otro diseño 
+- Cuando vayas a ver las recetas de los usuarios más activos e ingredientes más usados, que puedas pulsarlas y te lleven a la receta (Quizás que se vea también la imagen)
+- Filtros para el buscador
 - Tener algo en el Header que muestre un punto rojo con la cantidad de notificaciones que tenga el usuario
 - Cambiar la página principal un poco el diseño 
 
