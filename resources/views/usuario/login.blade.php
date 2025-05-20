@@ -68,7 +68,7 @@
                         </form>
                         
                         <div class="text-center mt-3">
-                            <p>¿No tienes cuenta? <a href="{{ route('signIn') }}">Regístrate</a></p>
+                            <p>¿No tienes cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
                         </div>
                     </div>
                 </div>

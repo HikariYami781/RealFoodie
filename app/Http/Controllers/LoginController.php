@@ -9,30 +9,43 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
-     * Summary of showLoginForm
-     * @return \Illuminate\Contracts\View\View
+     * Muestra la página de bienvenida
+     * @return mixed|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function welcome()
+    {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
+        return view('welcome');
+    }
+
+    /**
+     * Muestra el formulario de inicio de sesión
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function showLoginForm()
     {
         if (Auth::check()) {
-
-        return redirect()->route('home');
+            return redirect()->route('home');
         }
         return view('usuario.login');
     }
 
-
     /**
-     * Summary of showRegisterForm
-     * @return \Illuminate\Contracts\View\View
+     * Muestra el formulario de registro
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public function showRegisterForm()
     {
+        if (Auth::check()) {
+            return redirect()->route('home');
+        }
         return view('usuario.signIn'); 
     }
 
     /**
-     * Summary of register
+     * Registra un nuevo usuario
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
@@ -54,7 +67,7 @@ class LoginController extends Controller
             'telefono.regex' => 'El teléfono solo puede contener números.'
         ];
 
-        //Validación
+        // Validación
         $rules = [
             'name' => [
                 'required',
@@ -70,10 +83,10 @@ class LoginController extends Controller
             ],
             'password' => 'required|min:6|confirmed',
             'telefono' => [
-                            'nullable',
-                            'max:20',
-                            'regex:/^[0-9]+$/'
-                        ]
+                'nullable',
+                'max:20',
+                'regex:/^[0-9]+$/'
+            ]
         ];
 
         try {
@@ -95,47 +108,38 @@ class LoginController extends Controller
     }
 
     /**
-     * Summary of login
+     * Inicia sesión de usuario
      * @param \Illuminate\Http\Request $request
-     * @return mixed|\Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function login(Request $request)
     {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required'
-    ]);
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
 
-    $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->first();
 
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        return back()->with('error', 'Las credenciales proporcionadas no coinciden con nuestros registros.');
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return back()->with('error', 'Las credenciales proporcionadas no coinciden con nuestros registros.');
+        }
+
+        Auth::login($user);
+
+        return redirect()->route('home');
     }
 
-    Auth::login($user);
-
-    return redirect()->route('home');
-    }
     /**
-     * Summary of logout
-     * @return mixed|\Illuminate\Http\RedirectResponse
+     * Cierra la sesión del usuario
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function logout()
     {
-    Auth::logout();
-    return redirect()->route('login');
+        Auth::logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        
+        return redirect()->route('login');
     }
-
-    /**
-     * Summary of welcome
-     * @return mixed|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
-     */
-    public function welcome()
-    {
-        if (Auth::check()) {
-            return redirect()->route('home');
-    }
-        return view('welcome');
-        }
-
 }

@@ -40,7 +40,7 @@
                 
                 <div class="d-grid gap-3 col-md-6 mx-auto">
                 <a href="{{ route('login') }}" class="btn btn-primary btn-lg">Iniciar Sesión</a>
-                <a href="{{ route('signIn') }}" class="btn btn-outline-primary btn-lg">Registrarse</a>
+                <a href="{{ route('register') }}" class="btn btn-outline-primary btn-lg">Registrarse</a>
                 </div>
             </div>
         </div>

@@ -15,27 +15,27 @@ require __DIR__.'/auth.php';
 Route::get('/', [LoginController::class, 'welcome'])->name('welcome');
 
 // Página principal
-Route::get('/home', [RecetaController::class, 'index'])->name('home');
+Route::get('/home', [RecetaController::class, 'index'])->name('home')->middleware('auth');
 
 // Búsqueda
-Route::get('/buscar', [RecetaController::class, 'search'])->name('recetas.search');
+Route::get('/buscar', [RecetaController::class, 'search'])->name('recetas.search')->middleware('auth');
 
-// Rutas de autenticación (generadas por Laravel Breeze)
-// Autenticación
+//Inicio y Registro
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::get('/signIn', [LoginController::class, 'showRegisterForm'])->name('signIn');
-Route::post('/signIn', [LoginController::class, 'register'])->name('signIn.post');
+Route::get('/register', [LoginController::class, 'showRegisterForm'])->name('register');
+Route::post('/register', [LoginController::class, 'register'])->name('register.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout'); 
 
 
-//Recetas 
-Route::get('/recetas/nueva', [RecetaController::class, 'create'])->name('recetas.create');
+//Recetas
+Route::get('/recetas', [RecetaController::class, 'index'])->name('recetas.index')->middleware('auth');
+Route::get('/recetas/nueva', [RecetaController::class, 'create'])->name('recetas.create')->middleware('auth');
 Route::post('/recetas', [RecetaController::class, 'store'])->name('recetas.store')->middleware('auth');
-Route::get('/recetas/{receta}', [RecetaController::class, 'show'])->name('recetas.show');
-Route::get('/recetas/{receta}/editar', [RecetaController::class, 'edit'])->name('recetas.edit');
-Route::put('/recetas/{receta}', [RecetaController::class, 'update'])->name('recetas.update');
-Route::delete('/recetas/{receta}', [RecetaController::class, 'destroy'])->name('recetas.destroy');
+Route::get('/recetas/{receta}', [RecetaController::class, 'show'])->name('recetas.show')->middleware('auth');
+Route::get('/recetas/{receta}/editar', [RecetaController::class, 'edit'])->name('recetas.edit')->middleware('auth');
+Route::put('/recetas/{receta}', [RecetaController::class, 'update'])->name('recetas.update')->middleware('auth');
+Route::delete('/recetas/{receta}', [RecetaController::class, 'destroy'])->name('recetas.destroy')->middleware('auth');
 Route::post('/recetas/{receta}/favorito', [RecetaController::class, 'favorite'])->name('recetas.favorite')->middleware('auth');
 Route::post('/recetas/{receta}/valorar', [RecetaController::class, 'rate'])->name('recetas.rate')->middleware('auth');
 
@@ -68,10 +68,10 @@ Route::get('/consultas/usuarios-activos', [ConsultasController::class, 'usuarios
 Route::get('/consultas/ingredientes-populares', [ConsultasController::class, 'ingredientesPopulares'])->name('consultas.ingredientes-populares')->middleware('auth');
 
 // Usuarios
-Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show');
+Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show')->middleware('auth');
 Route::post('/usuarios/{user}/seguir', [UserController::class, 'toggleFollow'])->name('users.toggleFollow')->middleware('auth');
-Route::get('/usuarios/{user}/seguidores', [UserController::class, 'followers'])->name('users.followers');
-Route::get('/usuarios/{user}/siguiendo', [UserController::class, 'following'])->name('users.following');
+Route::get('/usuarios/{user}/seguidores', [UserController::class, 'followers'])->name('users.followers')->middleware('auth');
+Route::get('/usuarios/{user}/siguiendo', [UserController::class, 'following'])->name('users.following')->middleware('auth');
 
 //Perfil
 Route::get('/perfil', [ProfileController::class, 'show'])->name('profile.show')->middleware('auth');
@@ -84,8 +84,5 @@ Route::get('/dashboard', function () {
     return redirect()->route('home');
 })->middleware(['auth'])->name('dashboard');
 
-Route::post('/logout', function () {Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');

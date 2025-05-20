@@ -82,7 +82,7 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('signIn.post') }}" method="POST">
+                        <form action="{{ route('register.post') }}" method="POST">
                             @csrf
                             <div class="mb-3">
                                 <label for="name" class="form-label">Nombre</label>
@@ -98,6 +98,15 @@
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" 
                                        id="email" name="email" value="{{ old('email') }}" required>
                                 @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="telefono" class="form-label">Teléfono (opcional)</label>
+                                <input type="text" class="form-control @error('telefono') is-invalid @enderror" 
+                                       id="telefono" name="telefono" value="{{ old('telefono') }}">
+                                @error('telefono')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
