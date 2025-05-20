@@ -24,16 +24,28 @@ class LoginController extends Controller
         return view('welcome');
     }
 
+
     /**
      * Muestra el formulario de inicio de sesión
      * @return \Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
-        if (Auth::check()) {
-            return redirect()->route('home');
-        }
-        return view('usuario.login');
+        
+    // La redirección si está autenticado ahora la maneja el middleware 'guest' 
+    // Verificar si llegamos aquí después de un logout explícito
+    $explicitLogout = session('explicit_logout', false);
+    
+    // Si no es un logout explícito, eliminamos cualquier mensaje de éxito
+    // para evitar confusiones
+    if (!$explicitLogout) {
+        session()->forget('success');
+    }
+    
+    // Limpiamos el indicador para futuras visitas
+    session()->forget('explicit_logout');
+    
+    return view('usuario.login');
     }
 
     /**
@@ -153,8 +165,8 @@ class LoginController extends Controller
         // Regenerar el token CSRF
         $request->session()->regenerateToken();
         
-        // Limpiar todas las sesiones activas
-        Session::flush();
+        // Guardar un indicador específico en la sesión para identificar un logout explícito
+        session(['explicit_logout' => true]);
         
         // Redirigir al login con mensaje de confirmación
         return redirect()->route('login')

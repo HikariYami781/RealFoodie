@@ -15,10 +15,10 @@ require __DIR__.'/auth.php';
 Route::get('/', [LoginController::class, 'welcome'])->name('welcome');
 
 // Rutas de autenticación
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::get('/register', [LoginController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [LoginController::class, 'register'])->name('register.post');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('guest');
+Route::get('/register', [LoginController::class, 'showRegisterForm'])->name('register')->middleware('guest');
+Route::post('/register', [LoginController::class, 'register'])->name('register.post')->middleware('guest');
 
 // Aplicamos 'auth' y 'prevent-back' a todas las rutas protegidas
 Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->group(function () {

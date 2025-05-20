@@ -39,7 +39,9 @@ Ideas en [este repositorio](https://github.com).
 
 ## Solventar Errores
 - Puedo entrar a la página principal sin necesidad de logear -> si pongo /home [Hecho]
-- Puedo volver atrás en el navegador y no debería poder  [Hecho]
+- Si cierro la sesión y vuelvo hacia atrás sigue activa -> debería de llevarme al login [Hecho]
+- Si uso las flechas hacia atrás me salta que se ha cerrado la sesión correctamente, pero si las vuelvo
+a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa
 
 
 ## Mejoras
