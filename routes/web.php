@@ -21,7 +21,7 @@ Route::get('/register', [LoginController::class, 'showRegisterForm'])->name('reg
 Route::post('/register', [LoginController::class, 'register'])->name('register.post');
 
 // Aplicamos 'auth' y 'prevent-back' a todas las rutas protegidas
-Route::middleware(['auth', 'prevent-back'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->group(function () {
     // Página principal
     Route::get('/home', [RecetaController::class, 'index'])->name('home');
     
