@@ -39,7 +39,7 @@ Ideas en [este repositorio](https://github.com).
 
 ## Solventar Errores
 - Puedo entrar a la página principal sin necesidad de logear -> si pongo /home [Hecho]
-- Puedo volver atrás en el navegador y no debería poder
+- Puedo volver atrás en el navegador y no debería poder  [Hecho]
 
 
 ## Mejoras
