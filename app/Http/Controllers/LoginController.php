@@ -5,9 +5,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
+    // No necesitamos un constructor especial aquí, 
+    // ya que la aplicación del middleware se hará en las rutas
+
     /**
      * Muestra la página de bienvenida
      * @return mixed|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
@@ -125,6 +129,9 @@ class LoginController extends Controller
             return back()->with('error', 'Las credenciales proporcionadas no coinciden con nuestros registros.');
         }
 
+        // Regenerar sesión antes de iniciar sesión para prevenir ataques de fijación de sesión
+        $request->session()->regenerate();
+        
         Auth::login($user);
 
         return redirect()->route('home');
@@ -132,14 +139,25 @@ class LoginController extends Controller
 
     /**
      * Cierra la sesión del usuario
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
+        // Cerrar sesión de autenticación
         Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
         
-        return redirect()->route('login');
+        // Invalidar la sesión actual
+        $request->session()->invalidate();
+        
+        // Regenerar el token CSRF
+        $request->session()->regenerateToken();
+        
+        // Limpiar todas las sesiones activas
+        Session::flush();
+        
+        // Redirigir al login con mensaje de confirmación
+        return redirect()->route('login')
+            ->with('success', 'Has cerrado sesión correctamente.');
     }
 }

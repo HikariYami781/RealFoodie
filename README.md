@@ -38,11 +38,12 @@ Ideas en [este repositorio](https://github.com).
 
 
 ## Solventar Errores
-- Puedo entrar a la página principal sin necesidad de logear -> si pongo /home
+- Puedo entrar a la página principal sin necesidad de logear -> si pongo /home [Hecho]
 - Puedo volver atrás en el navegador y no debería poder
 
 
 ## Mejoras
+- Recuperación de Contraseña 
 - Header / ponerlo en todas las vistas
 - Footer (En algunas vistas no va a estar presente)
 - Background Image -Welcome Subir resolución
