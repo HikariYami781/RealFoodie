@@ -31,7 +31,10 @@ Ideas en [este repositorio](https://github.com).
 - Logo Página web -> No lo pilla la pestaña web
 - Perfil [Hecho]
 - Comentarios [Hecho]
-- Favoritos,colecciones, valoraciones con estrellas, icono en la card para que puedas añadirlo a fav o guardarla en la colección, seguidores
+- Favoritos -> Icono en la card para que puedas añadirlo a Fav y aparezca en tu perfil de usuario
+- Colecciones -> Icono en la card para que puedas añadirlo a tus colecciones y un dropdown para que elijas a cual quieres añadirla
+- Valoraciones con estrellas
+- Seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida/ Notificaciones
 
