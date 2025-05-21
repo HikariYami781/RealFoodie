@@ -44,10 +44,12 @@
 
                         <form action="{{ route('login.post') }}" method="POST">
                             @csrf
+                            <form action="{{ route('login.post') }}" method="POST" autocomplete="off">
+                            @csrf
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
                                 <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                       id="email" name="email" value="{{ old('email') }}" required>
+                                    id="email" name="email" value="{{ old('email') }}" required autocomplete="off">
                                 @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -56,7 +58,7 @@
                             <div class="mb-3">
                                 <label for="password" class="form-label">Contraseña</label>
                                 <input type="password" class="form-control @error('password') is-invalid @enderror" 
-                                       id="password" name="password" required>
+                                    id="password" name="password" required autocomplete="off">
                                 @error('password')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -76,4 +78,21 @@
         </div>
     </div>
 </body>
+
+<script>
+    // Limpiar formulario al cargar la página si viene de navegación hacia atrás
+    if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+        document.getElementById('email').value = '';
+        document.getElementById('password').value = '';
+    }
+    
+    // Prevenir que el navegador autocomplete el formulario
+    window.onpageshow = function(event) {
+        if (event.persisted) {
+            document.getElementById('email').value = '';
+            document.getElementById('password').value = '';
+        }
+    };
+</script>
+
 </html>

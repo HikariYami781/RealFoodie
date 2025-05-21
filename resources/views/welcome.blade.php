@@ -30,6 +30,11 @@
         }
     </style>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+     <script>
+        var isUserAuthenticated = {{ Auth::check() ? 'true' : 'false' }};
+    </script>
+
 </head>
 <body>
     <div class="container mt-5 welcome">
@@ -47,5 +52,15 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+     <script>
+        // Detectar si el usuario está navegando hacia atrás
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+            // variable que ya tenemos arriba definida
+            if (isUserAuthenticated) {
+                // Si el usuario está autenticado, redirigir a home
+                window.location.href = "{{ route('home') }}";
+            }
+        };
+    </script>
 </body>
 </html>

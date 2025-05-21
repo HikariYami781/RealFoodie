@@ -16,14 +16,20 @@ class LoginController extends Controller
      * Muestra la página de bienvenida
      * @return mixed|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function welcome()
+    public function welcome(Request $request)
     {
         if (Auth::check()) {
             return redirect()->route('home');
         }
-        return view('welcome');
+        
+        // Añadir cabeceras para prevenir caché específicamente para esta vista
+        $response = response()->view('welcome');
+        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->header('Pragma', 'no-cache');
+        $response->header('Expires', 'Sat, 01 Jan 1990 00:00:00 GMT');
+        
+        return $response;
     }
-
 
     /**
      * Muestra el formulario de inicio de sesión
@@ -31,21 +37,26 @@ class LoginController extends Controller
      */
     public function showLoginForm(Request $request)
     {
+        // La redirección si está autenticado ahora la maneja el middleware 'guest' 
+        // Verificar si llegamos aquí después de un logout explícito
+        $explicitLogout = session('explicit_logout', false);
         
-    // La redirección si está autenticado ahora la maneja el middleware 'guest' 
-    // Verificar si llegamos aquí después de un logout explícito
-    $explicitLogout = session('explicit_logout', false);
-    
-    // Si no es un logout explícito, eliminamos cualquier mensaje de éxito
-    // para evitar confusiones
-    if (!$explicitLogout) {
-        session()->forget('success');
-    }
-    
-    // Limpiamos el indicador para futuras visitas
-    session()->forget('explicit_logout');
-    
-    return view('usuario.login');
+        // Si no es un logout explícito, eliminamos cualquier mensaje de éxito
+        // para evitar confusiones
+        if (!$explicitLogout) {
+            session()->forget('success');
+        }
+        
+        // Limpiamos el indicador para futuras visitas
+        session()->forget('explicit_logout');
+        
+        // Añadir cabeceras para prevenir caché específicamente para esta vista
+        $response = response()->view('usuario.login');
+        $response->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->header('Pragma', 'no-cache');
+        $response->header('Expires', 'Sat, 01 Jan 1990 00:00:00 GMT');
+        
+        return $response;
     }
 
     /**

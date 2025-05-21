@@ -12,15 +12,15 @@ use Illuminate\Support\Facades\Auth;
 require __DIR__.'/auth.php';
 
 //Página Bienvenida
-Route::get('/', [LoginController::class, 'welcome'])->name('welcome');
+Route::get('/', [LoginController::class, 'welcome'])->name('welcome')  ->middleware(\App\Http\Middleware\PreventBackHistory::class);
 
 // Rutas de autenticación
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware(['guest', \App\Http\Middleware\PreventBackHistory::class]);
 Route::post('/login', [LoginController::class, 'login'])->name('login.post')->middleware('guest');
 Route::get('/register', [LoginController::class, 'showRegisterForm'])->name('register')->middleware('guest');
 Route::post('/register', [LoginController::class, 'register'])->name('register.post')->middleware('guest');
 
-// Aplicamos 'auth' y 'prevent-back' a todas las rutas protegidas
+// Aplicamos 'auth' y 'prevent-back' 
 Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->group(function () {
     // Página principal
     Route::get('/home', [RecetaController::class, 'index'])->name('home');
