@@ -13,10 +13,22 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->load(['recetas.categoria', 'recetas.valoraciones', 'recetas.user', 'recetasFavoritas.user', 'recetasFavoritas.valoraciones', 'colecciones']);
+        // Cargamos las relaciones básicas
+        $user->load(['recetas.categoria', 'recetas.valoraciones', 'recetas.user']);
+        
+        // Cargamos la relación recetasFavoritas con sus relaciones
+        $user->load(['recetasFavoritas.categoria', 'recetasFavoritas.valoraciones', 'recetasFavoritas.user']);
+        
+        // Cargamos las colecciones
+        $user->load('colecciones');
+        
+        // Filtramos solo las recetas públicas del usuario para mostrar
         $recetas = $user->recetas()->where('publica', true)->paginate(9);
         
-        return view('profile.show', compact('user', 'recetas'));
+        // También podemos paginar las favoritas si hay muchas
+        $favoritas = $user->recetasFavoritas()->paginate(9);
+        
+        return view('profile.show', compact('user', 'recetas', 'favoritas'));
     }
     
     /**

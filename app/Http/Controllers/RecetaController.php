@@ -13,30 +13,43 @@ class RecetaController extends Controller
 {
     public function index()
     {
+        // Cargamos las relaciones necesarias incluyendo recetasFavoritas
         $recetas = Receta::where('publica', true)
                 ->orderBy('fecha_publicacion', 'desc')
                 ->with(['user', 'categoria', 'valoraciones'])
                 ->take(3)
                 ->paginate(6);
         
+        // Si el usuario está autenticado, verificamos qué recetas son favoritas
+        if (Auth::check()) {
+            $favoritasIds = Auth::user()->recetasFavoritas()->pluck('receta_id')->toArray();
+            // Pasamos los IDs de favoritos a la vista
+            return view('index', compact('recetas', 'favoritasIds'));
+        }
+        
         return view('index', compact('recetas'));
     }
 
     public function search(Request $request)
-{
-    $query = $request->input('query');
-    
-    $recetas = Receta::where(function($q) use ($query) {
-                $q->where('titulo', 'LIKE', '%' . $query . '%')
-                  ->orWhere('descripcion', 'LIKE', '%' . $query . '%');
-            })
-
-            ->with(['ingredientes', 'user', 'categoria'])
-            ->paginate(3)
-            ->appends(['query' => $query]);
-    
-    return view('index', compact('recetas'));
-}
+    {
+        $query = $request->input('query');
+        
+        $recetas = Receta::where(function($q) use ($query) {
+                    $q->where('titulo', 'LIKE', '%' . $query . '%')
+                      ->orWhere('descripcion', 'LIKE', '%' . $query . '%');
+                })
+                ->with(['ingredientes', 'user', 'categoria'])
+                ->paginate(3)
+                ->appends(['query' => $query]);
+        
+        // Verificamos también los favoritos en la búsqueda
+        if (Auth::check()) {
+            $favoritasIds = Auth::user()->recetasFavoritas()->pluck('receta_id')->toArray();
+            return view('index', compact('recetas', 'favoritasIds'));
+        }
+        
+        return view('index', compact('recetas'));
+    }
 
 
 public function show(Receta $receta)

@@ -184,17 +184,71 @@
                             @endif
                         </div>
                         
-                        <!-- Tab: Recetas favoritas -->
+                       <!-- Tab: Favoritas -->
                         <div class="tab-pane fade" id="favoritas" role="tabpanel" aria-labelledby="favoritas-tab">
-                            @if($user->recetasFavoritas->count() > 0)
+                            @if(isset($favoritas) && $favoritas->count() > 0)
+                                <div class="row row-cols-1 row-cols-md-2 g-4">
+                                    @foreach($favoritas as $favorita)
+                                        <div class="col">
+                                            <div class="card h-100">
+                                                @if($favorita->imagen)
+                                                    <!-- Verificamos la ruta correcta de la imagen -->
+                                                    @if(strpos($favorita->imagen, 'recetas/') === 0)
+                                                        <img src="{{ '/storage/' . $favorita->imagen }}" 
+                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
+                                                            style="height: 180px; object-fit: cover;">
+                                                    @else
+                                                        <img src="{{ '/storage/recetas/' . $favorita->imagen }}" 
+                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
+                                                            style="height: 180px; object-fit: cover;">
+                                                    @endif
+                                                @else
+                                                    <div class="bg-light text-center pt-4" style="height: 180px;">
+                                                        <i class="fas fa-utensils fa-4x text-muted"></i>
+                                                    </div>
+                                                @endif
+                                                
+                                                <div class="card-body">
+                                                    <h5 class="card-title">{{ $favorita->titulo }}</h5>
+                                                    <p class="card-text small text-muted">
+                                                        <i class="fas fa-user me-1"></i>{{ $favorita->user->nombre }}
+                                                    </p>
+
+                                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                                        <a href="{{ route('recetas.show', $favorita) }}" class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-eye me-1"></i>Ver receta
+                                                        </a>
+                                                        <span class="badge bg-warning text-dark">
+                                                            <i class="fas fa-star me-1"></i>
+                                                            {{ $favorita->valoraciones->avg('puntuacion') ? number_format($favorita->valoraciones->avg('puntuacion'), 1) : 'N/A' }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                
+                                <!-- Agregar paginación para favoritas -->
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $favoritas->links() }}
+                                </div>
+                            @elseif($user->recetasFavoritas->count() > 0)
                                 <div class="row row-cols-1 row-cols-md-2 g-4">
                                     @foreach($user->recetasFavoritas as $favorita)
                                         <div class="col">
                                             <div class="card h-100">
                                                 @if($favorita->imagen)
-                                                    <img src="{{ asset('storage/recetas/' . $favorita->imagen) }}" 
-                                                        class="card-img-top" alt="{{ $favorita->titulo }}" 
-                                                        style="height: 180px; object-fit: cover;">
+                                                    <!-- Verificamos la ruta correcta de la imagen -->
+                                                    @if(strpos($favorita->imagen, 'recetas/') === 0)
+                                                        <img src="{{ '/storage/' . $favorita->imagen }}" 
+                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
+                                                            style="height: 180px; object-fit: cover;">
+                                                    @else
+                                                        <img src="{{ '/storage/recetas/' . $favorita->imagen }}" 
+                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
+                                                            style="height: 180px; object-fit: cover;">
+                                                    @endif
                                                 @else
                                                     <div class="bg-light text-center pt-4" style="height: 180px;">
                                                         <i class="fas fa-utensils fa-4x text-muted"></i>
