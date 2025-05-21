@@ -46,6 +46,8 @@ Ideas en [este repositorio](https://github.com).
 - Si uso las flechas hacia atrás me salta que se ha cerrado la sesión correctamente, pero si las vuelvo
 a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho]
 - Si el usuario esta logeado no puede volver al login o a la página de welcome si se mueve con las flechas en el navegador [Hecho]
+- Cuando quieres agregar a Fav, sale que ha sido un éxito, pero en el perfil no aparece
+-Faltan crear las vistas de Colecciones
 
 
 ## Mejoras

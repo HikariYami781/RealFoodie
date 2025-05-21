@@ -39,7 +39,7 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::get('/recetas/{receta}/editar', [RecetaController::class, 'edit'])->name('recetas.edit');
     Route::put('/recetas/{receta}', [RecetaController::class, 'update'])->name('recetas.update');
     Route::delete('/recetas/{receta}', [RecetaController::class, 'destroy'])->name('recetas.destroy');
-    Route::post('/recetas/{receta}/favorito', [RecetaController::class, 'favorite'])->name('recetas.favorite');
+    Route::post('/recetas/{receta}/favorite', [RecetaController::class, 'favorite'])->name('recetas.favorite');
     Route::post('/recetas/{receta}/valorar', [RecetaController::class, 'rate'])->name('recetas.rate');
     
     // Ingredientes 

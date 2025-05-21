@@ -13,7 +13,7 @@ class RecetaController extends Controller
 {
     public function index()
     {
-        // Cargamos las relaciones necesarias incluyendo recetasFavoritas
+        // Cargamos las relaciones necesarias
         $recetas = Receta::where('publica', true)
                 ->orderBy('fecha_publicacion', 'desc')
                 ->with(['user', 'categoria', 'valoraciones'])
@@ -23,13 +23,11 @@ class RecetaController extends Controller
         // Si el usuario está autenticado, verificamos qué recetas son favoritas
         if (Auth::check()) {
             $favoritasIds = Auth::user()->recetasFavoritas()->pluck('receta_id')->toArray();
-            // Pasamos los IDs de favoritos a la vista
             return view('index', compact('recetas', 'favoritasIds'));
         }
         
         return view('index', compact('recetas'));
     }
-
     public function search(Request $request)
     {
         $query = $request->input('query');
@@ -257,24 +255,24 @@ public function destroy(Receta $receta)
                     ->with('success', 'Receta eliminada correctamente.');
 }
 
-    public function favorite(Receta $recetas)
-    {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
+        public function favorite(Receta $receta)
+        {
+            if (!Auth::check()) {
+                return redirect()->route('login');
+            }
 
-        $user = Auth::user();
-        
-        if ($user->recetasFavoritas()->where('receta_id', $recetas->id)->exists()) {
-            $user->recetasFavoritas()->detach($recetas->id);
-            $message = 'Receta eliminada de favoritos.';
-        } else {
-            $user->recetasFavoritas()->attach($recetas->id);
-            $message = 'Receta añadida a favoritos.';
-        }
+            $user = Auth::user();
+            
+            if ($user->recetasFavoritas()->where('receta_id', $receta->id)->exists()) {
+                $user->recetasFavoritas()->detach($receta->id);
+                $message = 'Receta eliminada de favoritos.';
+            } else {
+                $user->recetasFavoritas()->attach($receta->id);
+                $message = 'Receta añadida a favoritos.';
+            }
 
-        return back()->with('success', $message);
-    }
+            return back()->with('success', $message);
+        }
 
     public function rate(Request $request, Receta $recetas)
     {

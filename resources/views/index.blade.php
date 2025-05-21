@@ -192,7 +192,6 @@
                                         <button type="button" class="btn btn-sm text-secondary" title="Añadir a colección" data-bs-toggle="modal" data-bs-target="#coleccionModal{{ $receta->id }}">
                                             <i class="fas fa-plus-circle"></i>
                                         </button>
-                                    @endauth
                                 </div>
                                 
                                 <div class="col-6 text-end">
