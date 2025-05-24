@@ -31,8 +31,8 @@ Ideas en [este repositorio](https://github.com).
 - Logo Página web -> No lo pilla la pestaña web
 - Perfil [Hecho]
 - Comentarios [Hecho]
-- Favoritos -> Icono en la card para que puedas añadirlo a Fav y aparezca en tu perfil de usuario
-- Colecciones -> Icono en la card para que puedas añadirlo a tus colecciones y un dropdown para que elijas a cual quieres añadirla
+- Favoritos -> Icono en la card para que puedas añadirlo a Fav y aparezca en tu perfil de usuario [Hecho]
+- Colecciones -> Icono en la card para que puedas añadirlo a tus colecciones y un dropdown para que elijas a cual quieres añadirla [Hecho]
 - Valoraciones con estrellas
 - Seguidores
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
@@ -46,7 +46,7 @@ Ideas en [este repositorio](https://github.com).
 - Si uso las flechas hacia atrás me salta que se ha cerrado la sesión correctamente, pero si las vuelvo
 a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho]
 - Si el usuario esta logeado no puede volver al login o a la página de welcome si se mueve con las flechas en el navegador [Hecho]
-- Cuando quieres agregar a Fav, sale que ha sido un éxito, pero en el perfil no aparece
+- Cuando quieres agregar a Fav, sale que ha sido un éxito, pero en el perfil no aparece [Hecho]
 -Faltan crear las vistas de Colecciones
 
 
@@ -54,7 +54,7 @@ a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho
 - Recuperación de Contraseña 
 - Header / ponerlo en todas las vistas
 - Footer (En algunas vistas no va a estar presente)
-- Background Image -Welcome Subir resolución
+- Background Image -Welcome Subir resolución [Hecho]
 - Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal 
 - Que aparezca el nombre del usuario que las ha creado con la foto y puedes ir a su perfil (Recetas)
 - Poner los Comentarios con otro diseño 

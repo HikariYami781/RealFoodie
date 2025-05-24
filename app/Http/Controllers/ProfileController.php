@@ -19,10 +19,25 @@ class ProfileController extends Controller
     public function show()
     {
         $user = auth()->user();
-        $user->load(['recetas.categoria', 'recetas.valoraciones', 'recetas.user', 'recetasFavoritas.user', 'recetasFavoritas.valoraciones', 'colecciones']);
-        $recetas = $user->recetas()->where('publica', true)->paginate(9);
         
-        return view('profile.show', compact('user', 'recetas'));
+        // Cargar las relaciones necesarias incluyendo las recetas favoritas
+        $user->load([
+            'recetas.categoria', 
+            'recetas.valoraciones', 
+            'recetas.user', 
+            'recetasFavoritas.categoria',
+            'recetasFavoritas.valoraciones', 
+            'recetasFavoritas.user', 
+            'colecciones'
+        ]);
+        
+        // Obtener las recetas del usuario (públicas) con paginación
+        $recetas = $user->recetas()->where('publica', true)->paginate(9, ['*'], 'recetas_page');
+        
+        // Obtener las recetas favoritas con paginación
+        $favoritas = $user->recetasFavoritas()->where('publica', true)->paginate(9, ['*'], 'favoritas_page');
+        
+        return view('profile.show', compact('user', 'recetas', 'favoritas'));
     }
 
     /**

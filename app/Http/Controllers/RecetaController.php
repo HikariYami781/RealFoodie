@@ -8,16 +8,14 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-
 class RecetaController extends Controller
 {
     public function index()
     {
-        // Cargamos las relaciones necesarias
+        // Cargamos las recetas públicas con sus relaciones
         $recetas = Receta::where('publica', true)
                 ->orderBy('fecha_publicacion', 'desc')
                 ->with(['user', 'categoria', 'valoraciones'])
-                ->take(3)
                 ->paginate(6);
         
         // Si el usuario está autenticado, verificamos qué recetas son favoritas
@@ -28,6 +26,7 @@ class RecetaController extends Controller
         
         return view('index', compact('recetas'));
     }
+
     public function search(Request $request)
     {
         $query = $request->input('query');
@@ -36,8 +35,9 @@ class RecetaController extends Controller
                     $q->where('titulo', 'LIKE', '%' . $query . '%')
                       ->orWhere('descripcion', 'LIKE', '%' . $query . '%');
                 })
-                ->with(['ingredientes', 'user', 'categoria'])
-                ->paginate(3)
+                ->where('publica', true) // Solo recetas públicas
+                ->with(['user', 'categoria', 'valoraciones'])
+                ->paginate(6) // Mantener consistencia con index
                 ->appends(['query' => $query]);
         
         // Verificamos también los favoritos en la búsqueda
@@ -49,8 +49,7 @@ class RecetaController extends Controller
         return view('index', compact('recetas'));
     }
 
-
-public function show(Receta $receta)
+    public function show(Receta $receta)
     {
         // Solo permite ver recetas públicas o propias
         if (!$receta->publica && (!Auth::check() || Auth::id() != $receta->user_id)) {
@@ -70,7 +69,6 @@ public function show(Receta $receta)
         $categorias = Categoria::all();
         return view('recetas.create', compact('categorias'));
     }
-
 
     public function store(Request $request)
     {
@@ -112,38 +110,36 @@ public function show(Receta $receta)
             $receta->save();
         }
 
-    // Guardar ingredientes
-    $ingredientes = $request->input('ingredientes');
-    $cantidades = $request->input('cantidades');
-    $unidades = $request->input('unidades');
+        // Guardar ingredientes
+        $ingredientes = $request->input('ingredientes');
+        $cantidades = $request->input('cantidades');
+        $unidades = $request->input('unidades');
 
-    foreach ($ingredientes as $index => $nombre) {
-        if (!empty($nombre)) {
-            $ingrediente = Ingrediente::firstOrCreate(['nombre' => $nombre]);
+        foreach ($ingredientes as $index => $nombre) {
+            if (!empty($nombre)) {
+                $ingrediente = Ingrediente::firstOrCreate(['nombre' => $nombre]);
 
-            $receta->ingredientes()->attach($ingrediente->id, [
-                'cantidad' => $cantidades[$index],
-                'unidad' => $unidades[$index] ?? null,
-            ]);
+                $receta->ingredientes()->attach($ingrediente->id, [
+                    'cantidad' => $cantidades[$index],
+                    'unidad' => $unidades[$index] ?? null,
+                ]);
+            }
         }
+
+        // Guardar pasos
+        if ($request->filled('pasos')) {
+            foreach ($request->pasos as $orden => $descripcion) {
+                $receta->pasos()->create([
+                    'descripcion' => $descripcion,
+                    'orden' => $orden + 1,
+                ]);
+            }
+        }
+
+        return redirect()->route('home')->with('success', 'Receta creada con éxito');
     }
 
-    // Guardar pasos
-    if ($request->filled('pasos')) {
-        foreach ($request->pasos as $orden => $descripcion) {
-            $receta->pasos()->create([
-                'descripcion' => $descripcion,
-                'orden' => $orden + 1,
-            ]);
-        }
-    }
-
-    return redirect()->route('home')->with('success', 'Receta creada con éxito');
-}
-
-
-
-public function edit(Receta $receta) 
+    public function edit(Receta $receta) 
     {
         // Verificar si el usuario actual es el propietario
         if (Auth::id() != $receta->user_id) {
@@ -156,57 +152,53 @@ public function edit(Receta $receta)
         return view('recetas.edit', compact('receta', 'categorias'));
     }
 
-    
-
     public function update(Request $request, Receta $receta)
-{
-
-    if (Auth::id() != $receta->user_id) {
-        return redirect()->route('recetas.show', $receta)
-            ->with('error', 'No tienes permiso para editar esta receta');
-    }
-    
-    // Validación básica 
-    $request->validate([
-        'titulo' => 'required|max:255',
-        'descripcion' => 'required',
-        'ingredientes' => 'required|array',
-        'cantidades' => 'required|array',
-        'pasos' => 'required|array',
-        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-    ]);
-    
-    // Actualizar datos básicos de la receta
-    $receta->update([
-        'titulo' => $request->titulo,
-        'descripcion' => $request->descripcion,
-        'preparacion' => $request->preparacion ?? $receta->preparacion,
-        'coccion' => $request->coccion ?? $receta->coccion,
-        'dificultad' => $request->dificultad ?? $receta->dificultad,
-        'porciones' => $request->porciones ?? $receta->porciones,
-        'categoria_id' => $request->categoria_id ?? $receta->categoria_id
-    ]);
-    
-    // Procesar la imagen si se ha subido una nueva
-    if ($request->hasFile('imagen')) {
-        // Eliminar la imagen anterior si existe
-        if ($receta->imagen) {
-            Storage::disk('public')->delete($receta->imagen);
+    {
+        if (Auth::id() != $receta->user_id) {
+            return redirect()->route('recetas.show', $receta)
+                ->with('error', 'No tienes permiso para editar esta receta');
         }
         
-        $imagen = $request->file('imagen');
-        $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
-        $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
-        $receta->imagen = $rutaImagen;
-        $receta->save();
-    }
-    
+        // Validación básica 
+        $request->validate([
+            'titulo' => 'required|max:255',
+            'descripcion' => 'required',
+            'ingredientes' => 'required|array',
+            'cantidades' => 'required|array',
+            'pasos' => 'required|array',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+        
+        // Actualizar datos básicos de la receta
+        $receta->update([
+            'titulo' => $request->titulo,
+            'descripcion' => $request->descripcion,
+            'preparacion' => $request->preparacion ?? $receta->preparacion,
+            'coccion' => $request->coccion ?? $receta->coccion,
+            'dificultad' => $request->dificultad ?? $receta->dificultad,
+            'porciones' => $request->porciones ?? $receta->porciones,
+            'categoria_id' => $request->categoria_id ?? $receta->categoria_id
+        ]);
+        
+        // Procesar la imagen si se ha subido una nueva
+        if ($request->hasFile('imagen')) {
+            // Eliminar la imagen anterior si existe
+            if ($receta->imagen) {
+                Storage::disk('public')->delete($receta->imagen);
+            }
+            
+            $imagen = $request->file('imagen');
+            $nombreImagen = time() . '.' . $imagen->getClientOriginalExtension();
+            $rutaImagen = $imagen->storeAs('recetas', $nombreImagen, 'public');
+            $receta->imagen = $rutaImagen;
+            $receta->save();
+        }
+        
         // Actualizar ingredientes
         $receta->ingredientes()->detach();
         $ingredientes = $request->input('ingredientes');
         $cantidades = $request->input('cantidades');
         $unidades = $request->input('unidades', []);
-
 
         foreach ($ingredientes as $key => $nombreIngrediente) {
             if (!empty($nombreIngrediente) && isset($cantidades[$key])) {
@@ -215,7 +207,6 @@ public function edit(Receta $receta)
                 $datosAdjuntos = [
                     'cantidad' => $cantidades[$key]
                 ];
-                
                 
                 if (isset($unidades[$key])) {
                     $datosAdjuntos['unidad'] = $unidades[$key];
@@ -241,38 +232,38 @@ public function edit(Receta $receta)
         return redirect()->route('recetas.show', $receta)
                         ->with('success', 'Receta actualizada correctamente.');
     }
-public function destroy(Receta $receta)
-{
-    
-    if (Auth::id() != $receta->user_id) {
-        return redirect()->route('recetas.show', $receta)
-            ->with('error', 'No tienes permiso para eliminar esta receta');
-    }
-    
-    $receta->delete();
-    
-    return redirect()->route('home')
-                    ->with('success', 'Receta eliminada correctamente.');
-}
 
-        public function favorite(Receta $receta)
-        {
-            if (!Auth::check()) {
-                return redirect()->route('login');
-            }
-
-            $user = Auth::user();
-            
-            if ($user->recetasFavoritas()->where('receta_id', $receta->id)->exists()) {
-                $user->recetasFavoritas()->detach($receta->id);
-                $message = 'Receta eliminada de favoritos.';
-            } else {
-                $user->recetasFavoritas()->attach($receta->id);
-                $message = 'Receta añadida a favoritos.';
-            }
-
-            return back()->with('success', $message);
+    public function destroy(Receta $receta)
+    {
+        if (Auth::id() != $receta->user_id) {
+            return redirect()->route('recetas.show', $receta)
+                ->with('error', 'No tienes permiso para eliminar esta receta');
         }
+        
+        $receta->delete();
+        
+        return redirect()->route('home')
+                        ->with('success', 'Receta eliminada correctamente.');
+    }
+
+    public function favorite(Receta $receta)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $user = Auth::user();
+        
+        if ($user->recetasFavoritas()->where('receta_id', $receta->id)->exists()) {
+            $user->recetasFavoritas()->detach($receta->id);
+            $message = 'Receta eliminada de favoritos.';
+        } else {
+            $user->recetasFavoritas()->attach($receta->id);
+            $message = 'Receta añadida a favoritos.';
+        }
+
+        return back()->with('success', $message);
+    }
 
     public function rate(Request $request, Receta $recetas)
     {

@@ -6,7 +6,7 @@
     <title>RealFoodie - Bienvenido</title>
     <style>
         body {
-            background-image: url('images/fondo_principal.jpeg');
+            background-image: url('images/fondo_principal.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
