@@ -33,10 +33,17 @@ Ideas en [este repositorio](https://github.com).
 - Comentarios [Hecho]
 - Favoritos -> Icono en la card para que puedas añadirlo a Fav y aparezca en tu perfil de usuario [Hecho]
 - Colecciones -> Icono en la card para que puedas añadirlo a tus colecciones y un dropdown para que elijas a cual quieres añadirla [Hecho]
-- Valoraciones con estrellas
+- Subir resolución Imágenes [Hecho]
+- Cambiar imágenes [Hecho]
+- Valoraciones con estrellas [Hecho]
 - Seguidores
+- Vistas Colecciones 
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida/ Notificaciones
+- Recuperación de Contraseña 
+- Header / ponerlo en todas las vistas
+- Footer (En algunas vistas no va a estar presente)
+- Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal -> Quizás una Casa
 
 
 
@@ -47,15 +54,10 @@ Ideas en [este repositorio](https://github.com).
 a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho]
 - Si el usuario esta logeado no puede volver al login o a la página de welcome si se mueve con las flechas en el navegador [Hecho]
 - Cuando quieres agregar a Fav, sale que ha sido un éxito, pero en el perfil no aparece [Hecho]
--Faltan crear las vistas de Colecciones
+- Cuando el usuario va a eliminar su cuenta no puede escribir, parece que la pagina se queda congelada
 
 
 ## Mejoras
-- Recuperación de Contraseña 
-- Header / ponerlo en todas las vistas
-- Footer (En algunas vistas no va a estar presente)
-- Background Image -Welcome Subir resolución [Hecho]
-- Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal 
 - Que aparezca el nombre del usuario que las ha creado con la foto y puedes ir a su perfil (Recetas)
 - Poner los Comentarios con otro diseño 
 - Cuando vayas a ver las recetas de los usuarios más activos e ingredientes más usados, que puedas pulsarlas y te lleven a la receta (Quizás que se vea también la imagen)

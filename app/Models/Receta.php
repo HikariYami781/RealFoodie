@@ -65,6 +65,17 @@ class Receta extends Model
         return $this->hasMany(Valoracion::class);
     }
 
+    public function getPuntuacionPromedioAttribute()
+    {
+        return $this->valoraciones()->avg('puntuacion') ?? 0;
+    }
+
+   
+    public function getTotalValoracionesAttribute()
+    {
+        return $this->valoraciones()->count();
+    }
+
     public function colecciones()
     {
         return $this->belongsToMany(Coleccion::class, 'coleccion_receta')->withTimestamps();

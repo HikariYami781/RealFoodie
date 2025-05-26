@@ -56,12 +56,32 @@ class RecetaController extends Controller
             abort(403);
         }
 
-        $receta->load(['ingredientes', 'pasos', 'user', 'categoria', 'comentarios.user']);
+        $receta->load(['ingredientes', 'pasos', 'user', 'categoria', 'comentarios.user', 'valoraciones.user']);
         
-        // Calcula la puntuación promedio
-        $puntuacionPromedio = $receta->valoraciones()->avg('puntuacion');
+        // Calcula estadísticas de valoraciones
+        $valoraciones = $receta->valoraciones;
+        $puntuacionPromedio = $valoraciones->avg('puntuacion');
+        $totalValoraciones = $valoraciones->count();
+        $distribuccionValoraciones = [];
+        
+        // Calcular distribución de valoraciones (1-5 estrellas)
+        for ($i = 1; $i <= 5; $i++) {
+            $distribuccionValoraciones[$i] = $valoraciones->where('puntuacion', $i)->count();
+        }
+        
+        // Verificar si el usuario actual ya ha valorado esta receta
+        $valoracionUsuario = null;
+        if (Auth::check()) {
+            $valoracionUsuario = $valoraciones->where('user_id', Auth::id())->first();
+        }
 
-        return view('recetas.show', compact('receta', 'puntuacionPromedio'));
+        return view('recetas.show', compact(
+            'receta', 
+            'puntuacionPromedio', 
+            'totalValoraciones',
+            'distribuccionValoraciones',
+            'valoracionUsuario'
+        ));
     }
 
     public function create()
@@ -265,7 +285,7 @@ class RecetaController extends Controller
         return back()->with('success', $message);
     }
 
-    public function rate(Request $request, Receta $recetas)
+    public function rate(Request $request, Receta $receta)
     {
         if (!Auth::check()) {
             return redirect()->route('login');
@@ -277,11 +297,47 @@ class RecetaController extends Controller
 
         $user = Auth::user();
         
-        $valoracion = $recetas->valoraciones()->updateOrCreate(
+        $valoracion = $receta->valoraciones()->updateOrCreate(
             ['user_id' => $user->id],
             ['puntuacion' => $request->puntuacion]
         );
 
         return back()->with('success', 'Tu valoración ha sido registrada.');
+    }
+
+    // Nuevo método para manejar valoración con comentario
+    public function storeRatingWithComment(Request $request, Receta $receta)
+    {
+        if (!Auth::check()) {
+            return redirect()->route('login');
+        }
+
+        $request->validate([
+            'contenido' => 'required|string|max:1000',
+            'puntuacion' => 'nullable|integer|between:1,5',
+        ]);
+
+        $user = Auth::user();
+        
+        // Crear o actualizar comentario
+        $comentario = $receta->comentarios()->create([
+            'user_id' => $user->id,
+            'contenido' => $request->contenido,
+            'fecha' => now()
+        ]);
+
+        // Si se proporcionó valoración, crearla o actualizarla
+        if ($request->filled('puntuacion')) {
+            $receta->valoraciones()->updateOrCreate(
+                ['user_id' => $user->id],
+                ['puntuacion' => $request->puntuacion]
+            );
+            
+            $message = 'Tu comentario y valoración han sido publicados.';
+        } else {
+            $message = 'Tu comentario ha sido publicado.';
+        }
+
+        return back()->with('success', $message);
     }
 }

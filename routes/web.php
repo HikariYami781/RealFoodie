@@ -49,6 +49,7 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::post('/recetas/{receta}/comentarios', [ComentarioController::class, 'store'])->name('comentarios.store');
     Route::put('/comentarios/{comentario}', [ComentarioController::class, 'update'])->name('comentarios.update');
     Route::delete('/comentarios/{comentario}', [ComentarioController::class, 'destroy'])->name('comentarios.destroy');
+    Route::post('/recetas/{receta}/comentarios-rating', [RecetaController::class, 'storeRatingWithComment'])->name('comentarios.storeWithRating');
     
     // Colecciones
     Route::get('/colecciones', [ColeccionController::class, 'index'])->name('colecciones.index');

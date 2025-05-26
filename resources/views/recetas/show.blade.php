@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RealFoodie - {{ $receta->titulo }}</title> <!--Pongo esto para que en la pestaña salga el nombre de la receta-->
+    <title>RealFoodie - {{ $receta->titulo }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
          body {
             background-image: url('/images/show_recetas.jpg');
@@ -27,6 +28,117 @@
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
+            border-left: 4px solid #007bff;
+            transition: all 0.3s ease;
+        }
+        
+        .comentario:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .rating-stars {
+            color: #ffc107;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        
+        .rating-stars .far {
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .rating-stars .fas {
+            color: #ffc107;
+            cursor: pointer;
+        }
+        
+        .rating-stars .fa-star:hover {
+            color: #ffc107 !important;
+        }
+        
+        .rating-summary {
+            background: linear-gradient(45deg, #d2691e, #f4a460);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        
+        .rating-summary .average-rating {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .rating-bar {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 5px 0;
+            width: 100px;
+        }
+        
+        .rating-bar-fill {
+            background-color: #ffc107;
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .user-rating-form {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        
+        .comment-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #495057;
+            text-decoration: none;
+        }
+        
+        .user-name:hover {
+            color: #007bff;
+        }
+        
+        .comment-rating {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .rating-badge {
+            background: linear-gradient(45deg,#d2691e, #f4a460);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+        
+        .rating-distribution {
+            font-size: 0.9em;
+        }
+        
+        .rating-distribution .row {
+            margin-bottom: 5px;
+        }
+        
+        .small-stars {
+            font-size: 0.9em;
         }
     </style>
 </head>
@@ -151,7 +263,6 @@
                             </ul>
                         </div>
 
-
                         
                         <h3>Instrucciones</h3>
                         <div class="mt-3">
@@ -185,27 +296,94 @@
                     </div>
                 </div>
                 
-                <!-- Comentarios -->
+                <!-- Resumen de Valoraciones -->
+                @if($totalValoraciones > 0)
+                    <div class="rating-summary">
+                        <div class="average-rating">{{ number_format($puntuacionPromedio, 1) }}</div>
+                        <div class="rating-stars small-stars">
+                            @for($i = 1; $i <= 5; $i++)
+                                @if($i <= round($puntuacionPromedio))
+                                    <i class="fas fa-star"></i>
+                                @else
+                                    <i class="far fa-star"></i>
+                                @endif
+                            @endfor
+                        </div>
+                        <p class="mb-3">Basado en {{ $totalValoraciones }} valoración{{ $totalValoraciones != 1 ? 'es' : '' }}</p>
+                        
+                        <div class="rating-distribution">
+                            @for($i = 5; $i >= 1; $i--)
+                                <div class="row align-items-center justify-content-center mb-1">
+                                    <div class="col-auto">
+                                        <small>{{ $i }} estrella{{ $i != 1 ? 's' : '' }}</small>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="rating-bar">
+                                            <div class="rating-bar-fill" style="width: {{ $totalValoraciones > 0 ? ($distribuccionValoraciones[$i] / $totalValoraciones) * 100 : 0 }}%"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <small>{{ $distribuccionValoraciones[$i] }}</small>
+                                    </div>
+                                </div>
+                            @endfor
+                        </div>
+                    </div>
+                @endif
+                
+                <!-- Comentarios y Valoraciones -->
                 <div class="card mt-4">
                     <div class="card-body">
-                        <h3>Comentarios ({{ $receta->comentarios->count() }})</h3>                        
+                        <h3>Comentarios y Valoraciones ({{ $receta->comentarios->count() }})</h3>                        
 
-                        <!-- Formulario comentario (usuarios autenticados) -->
+                        <!-- Formulario comentario y valoración (usuarios autenticados) -->
                         @auth
-                            <form action="{{ route('comentarios.store', $receta) }}" method="POST" class="mb-4">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="contenido">Deja tu comentario:</label>
-                                    <textarea name="contenido" id="contenido" rows="3" class="form-control @error('contenido') is-invalid @enderror" required>{{ old('contenido') }}</textarea>
-                                    @error('contenido')
-                                        <span class="invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <button type="submit" class="btn btn-primary mt-2">Publicar comentario</button>
-                            </form>
+                            <div class="user-rating-form">
+                                <h5 class="mb-3">Comparte tu experiencia</h5>
+                                <form action="{{ route('comentarios.storeWithRating', $receta) }}" method="POST" id="rating-comment-form">
+                                    @csrf
+                                    
+                                    <!-- Valoración con estrellas -->
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold">Tu valoración (opcional):</label>
+                                        <div class="rating-stars" id="user-rating">
+                                            <i class="far fa-star" data-rating="1"></i>
+                                            <i class="far fa-star" data-rating="2"></i>
+                                            <i class="far fa-star" data-rating="3"></i>
+                                            <i class="far fa-star" data-rating="4"></i>
+                                            <i class="far fa-star" data-rating="5"></i>
+                                        </div>
+                                        <input type="hidden" name="puntuacion" id="puntuacion-input" value="">
+                                        <small class="text-muted">Haz clic en las estrellas para valorar (opcional)</small>
+                                        @if($valoracionUsuario)
+                                            <div class="mt-2">
+                                                <small class="text-info">
+                                                    <i class="fas fa-info-circle"></i> 
+                                                    Ya has valorado esta receta con {{ $valoracionUsuario->puntuacion }} estrella{{ $valoracionUsuario->puntuacion != 1 ? 's' : '' }}. 
+                                                    Si valoras nuevamente, se actualizará tu valoración anterior.
+                                                </small>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    
+                                    <!-- Comentario -->
+                                    <div class="mb-3">
+                                        <label for="contenido" class="form-label fw-bold">Tu comentario:</label>
+                                        <textarea name="contenido" id="contenido" rows="4" class="form-control @error('contenido') is-invalid @enderror" 
+                                                  placeholder="Comparte tu experiencia con esta receta..." required>{{ old('contenido') }}</textarea>
+                                        @error('contenido')
+                                            <span class="invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Publicar Comentario
+                                    </button>
+                                </form>
+                            </div>
                         @else
                             <div class="alert alert-info">
-                                <a href="{{ route('login') }}">Inicia sesión</a> para dejar un comentario.
+                                <a href="{{ route('login') }}">Inicia sesión</a> para dejar un comentario y valoración.
                             </div>
                         @endauth
                         
@@ -214,13 +392,35 @@
                          <div class="comentarios-lista mt-4">
                             @forelse($receta->comentarios->sortByDesc('fecha') as $comentario)
                                 <div class="comentario mb-3 p-3 border rounded bg-light">
-                                    <div class="d-flex justify-content-between">
-                                        <h5><a href="{{ route('users.show', $comentario->user) }}" class="text-decoration-none">{{ $comentario->user->nombre }}</a></h5>
-                                        <small class="text-muted">{{ $comentario->fecha->format('d/m/Y H:i') }}</small>
+                                    <div class="comment-meta">
+                                        <div>
+                                            <a href="{{ route('users.show', $comentario->user) }}" class="user-name">{{ $comentario->user->nombre }}</a>
+                                            <small class="text-muted d-block">{{ $comentario->fecha->format('d/m/Y H:i') }}</small>
+                                        </div>
+                                        
+                                        <!-- Mostrar valoración del usuario si existe -->
+                                        @php
+                                            $valoracionComentario = $receta->valoraciones->where('user_id', $comentario->user_id)->first();
+                                        @endphp
+                                        
+                                        @if($valoracionComentario)
+                                            <div class="comment-rating">
+                                                <div class="rating-stars small-stars">
+                                                    @for($i = 1; $i <= 5; $i++)
+                                                        @if($i <= $valoracionComentario->puntuacion)
+                                                            <i class="fas fa-star"></i>
+                                                        @else
+                                                            <i class="far fa-star"></i>
+                                                        @endif
+                                                    @endfor
+                                                </div>
+                                                <span class="rating-badge">{{ $valoracionComentario->puntuacion }}/5</span>
+                                            </div>
+                                        @endif
                                     </div>
                                     
                                     <div id="comentario-content-{{ $comentario->id }}">
-                                            <p>{{ $comentario->contenido }}</p>
+                                            <p class="mb-0">{{ $comentario->contenido }}</p>
                                     </div>
 
                                     <div id="comentario-edit-{{ $comentario->id }}" style="display: none;">
@@ -242,14 +442,14 @@
                                         @if(Auth::id() == $comentario->user_id)
                                             <div class="mt-2 text-end">
                                                 <button class="btn btn-sm btn-outline-primary" onclick="toggleEditComment({{ $comentario->id }})">
-                                                    Editar
+                                                    <i class="fas fa-edit me-1"></i>Editar
                                                 </button>
                                                 <form action="{{ route('comentarios.destroy', $comentario) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                             onclick="return confirm('¿Estás seguro de que quieres eliminar este comentario?')">
-                                                        Eliminar
+                                                        <i class="fas fa-trash me-1"></i>Eliminar
                                                     </button>
                                                 </form>
                                             </div>
@@ -287,6 +487,49 @@
             editElement.style.display = 'block';
         }
     }
+
+    // Sistema de valoración con estrellas
+    document.addEventListener('DOMContentLoaded', function() {
+        const ratingStars = document.querySelectorAll('#user-rating .fa-star');
+        const puntuacionInput = document.getElementById('puntuacion-input');
+        let selectedRating = 0;
+        
+        // Cargar valoración existente del usuario si existe
+        @if($valoracionUsuario)
+            selectedRating = {{ $valoracionUsuario->puntuacion }};
+            highlightStars(selectedRating);
+            puntuacionInput.value = selectedRating;
+        @endif
+        
+        ratingStars.forEach(star => {
+            star.addEventListener('mouseenter', function() {
+                const rating = parseInt(this.getAttribute('data-rating'));
+                highlightStars(rating);
+            });
+            
+            star.addEventListener('mouseleave', function() {
+                highlightStars(selectedRating);
+            });
+            
+            star.addEventListener('click', function() {
+                selectedRating = parseInt(this.getAttribute('data-rating'));
+                highlightStars(selectedRating);
+                puntuacionInput.value = selectedRating;
+            });
+        })
+        
+        function highlightStars(rating) {
+            ratingStars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+    })
 </script>
 
 </html>
