@@ -22,16 +22,21 @@
         html, body {
             height: 100%;
             margin: 0;
+            padding: 0;
         }
         
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding: 0;
+            margin: 0;
         }
         
         main {
             flex: 1 0 auto;
+            padding: 0;
+            margin: 0;
         }
         
         footer {

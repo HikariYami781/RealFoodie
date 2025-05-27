@@ -37,7 +37,7 @@ Ideas en [este repositorio](https://github.com).
 - Cambiar imágenes [Hecho]
 - Valoraciones con estrellas [Hecho]
 - Seguidores
-- Vistas Colecciones 
+- Vistas Colecciones [Hecho]
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida/ Notificaciones
 - Recuperación de Contraseña 
