@@ -27,7 +27,7 @@
     }
     
     .collection-header {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(#E0C3FC,#8EC5FC);
         padding: 1.5rem;
         color: white;
         position: relative;
@@ -48,17 +48,11 @@
     
     .collection-body {
         padding: 1.5rem;
+        -webkit-text-fill-color: black;
     }
-    
-    .cooking-icon {
-        background: linear-gradient(45deg, #ff4500, #ffff00);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
+     
     .btn-primary-custom {
-        background: linear-gradient(45deg, #667eea, #764ba2);
+        background: linear-gradient(#00CED1,#1E90FF, #00008B);
         border: none;
         border-radius: 12px;
         padding: 12px 25px;
@@ -70,7 +64,7 @@
     .btn-primary-custom:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-        background: linear-gradient(45deg, #5a67d8, #6b46c1);
+        background: linear-gradient(#00CED1,#1E90FF, #00008B);
     }
     
     .btn-outline-custom {
@@ -208,6 +202,10 @@
                 </div>
 
                 <!-- Estadísticas generales -->
+                @php
+                    $totalRecetas = $colecciones->sum(function($col) { return $col->recetas->count(); });
+                    $promedioRecetas = $colecciones->count() > 0 ? $totalRecetas / $colecciones->count() : 0;
+                @endphp
                 <div class="row mb-5" id="stats-section">
                     <div class="col-md-4 mb-3">
                         <div class="text-center text-white">
@@ -217,13 +215,13 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <div class="text-center text-white">
-                            <h3 class="fw-bold mb-1">{{ $colecciones->sum(function($col) { return $col->recetas->count(); }) }}</h3>
+                            <h3 class="fw-bold mb-1">{{ $totalRecetas }}</h3>
                             <small class="opacity-75">Recetas Guardadas</small>
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <div class="text-center text-white">
-                            <h3 class="fw-bold mb-1">{{ number_format($colecciones->avg(function($col) { return $col->recetas->count(); }), 1) }}</h3>
+                            <h3 class="fw-bold mb-1">{{ number_format($promedioRecetas, 1) }}</h3>
                             <small class="opacity-75">Promedio por Colección</small>
                         </div>
                     </div>
@@ -240,32 +238,13 @@
                                 <div class="collection-header">
                                     <div class="d-flex justify-content-between align-items-start position-relative">
                                         <div class="flex-grow-1">
-                                            <h5 class="fw-bold mb-2">{{ $coleccion->nombre }}</h5>
+                                            <h5 class="fw-bold text-dark mb-2">{{ $coleccion->nombre }}</h5>
                                             <div class="d-flex gap-2">
-                                                <span class="stats-badge">
-                                                    <i class="fas fa-book-open me-1"></i>
+                                                <span class="stats-badge text-dark">
+                                                    <i class="fas fa-book-open text-danger me-1"></i>
                                                     {{ $coleccion->recetas->count() }} {{ $coleccion->recetas->count() === 1 ? 'receta' : 'recetas' }}
                                                 </span>
                                             </div>
-                                        </div>
-                                        <div class="dropdown">
-                                            <button class="btn btn-sm text-white opacity-75" 
-                                                    type="button" 
-                                                    data-bs-toggle="dropdown">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a class="dropdown-item" href="{{ route('colecciones.show', $coleccion) }}">
-                                                        <i class="fas fa-eye me-2"></i>Ver Colección
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="{{ route('colecciones.edit', $coleccion) }}">
-                                                        <i class="fas fa-edit me-2"></i>Editar
-                                                    </a>
-                                                </li>
-                                            </ul>
                                         </div>
                                     </div>
                                 </div>
@@ -302,6 +281,13 @@
                                                 @endif
                                             </div>
                                         </div>
+                                    @else
+                                        <div class="mb-3">
+                                            <div class="text-center py-3">
+                                                <i class="fas fa-folder-open text-muted mb-2" style="font-size: 2rem;"></i>
+                                                <p class="text-muted small mb-0">Colección vacía</p>
+                                            </div>
+                                        </div>
                                     @endif
 
                                     <!-- Información adicional -->
@@ -321,7 +307,7 @@
                                     <!-- Botones de acción -->
                                     <div class="d-flex gap-2">
                                         <a href="{{ route('colecciones.show', $coleccion) }}" 
-                                           class="btn btn-primary-custom flex-grow-1">
+                                           class="btn btn-outline-custom flex-grow-1">
                                             <i class="fas fa-eye me-2"></i>
                                             Ver Colección
                                         </a>

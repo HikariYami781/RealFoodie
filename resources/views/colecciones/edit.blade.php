@@ -42,7 +42,7 @@
     }
     
     .btn-primary-custom {
-        background: linear-gradient(45deg, #667eea, #764ba2);
+        background: #32cd32;
         border: none;
         border-radius: 12px;
         padding: 15px 30px;
@@ -55,23 +55,23 @@
     .btn-primary-custom:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-        background: linear-gradient(45deg, #5a67d8, #6b46c1);
+        background: #32cd32;
     }
     
     .btn-secondary-custom {
-        background: rgba(108, 117, 125, 0.1);
+        background: #ffd700;
         border: 2px solid rgba(108, 117, 125, 0.2);
         border-radius: 12px;
         padding: 15px 30px;
         font-weight: 600;
-        color: #6c757d;
+        color: #008b8b;
         transition: all 0.3s ease;
     }
     
     .btn-secondary-custom:hover {
-        background: rgba(108, 117, 125, 0.2);
+        background: #ffd700;
         transform: translateY(-2px);
-        color: #495057;
+        color: #008b8b;
     }
     
     .btn-danger-custom {
@@ -92,15 +92,9 @@
         color: white;
     }
     
-    .info-card {
-        background: linear-gradient(135deg, #74b9ff, #0984e3);
-        border-radius: 15px;
-        border: none;
-        box-shadow: 0 10px 25px rgba(116, 185, 255, 0.3);
-    }
     
     .stats-card {
-        background: linear-gradient(135deg, #a8e6cf, #74b9ff);
+        background: linear-gradient(135deg, #74EBD5,#9FACE6);
         border-radius: 15px;
         border: none;
         box-shadow: 0 10px 25px rgba(168, 230, 207, 0.3);
@@ -153,7 +147,7 @@
 
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-7">
+            <div class="col-lg-8 col-xl-8">
                 <div class="content-wrapper">
                     <!-- Header mejorado -->
                     <div class="text-center mb-5">
@@ -161,7 +155,6 @@
                             <i class="fas fa-edit cooking-icon" style="font-size: 4rem;"></i>
                         </div>
                         <h1 class="display-4 fw-bold text-white mb-3">
-                            <i class="fas fa-pencil-alt me-2"></i>
                             Editar Colección
                         </h1>
                         <p class="text-white opacity-75 lead">

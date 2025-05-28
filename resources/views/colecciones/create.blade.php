@@ -18,12 +18,6 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
-    .cooking-icon {
-        background: linear-gradient(45deg, #ff4500, #ffff00);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
     
     .form-control-custom {
         border: 2px solid #e9ecef;
@@ -42,7 +36,7 @@
     }
     
     .btn-primary-custom {
-        background: linear-gradient(45deg, #667eea, #764ba2);
+        background: linear-gradient(#00CED1,#1E90FF, #00008B);
         border: none;
         border-radius: 12px;
         padding: 15px 30px;
@@ -55,23 +49,23 @@
     .btn-primary-custom:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-        background: linear-gradient(45deg, #5a67d8, #6b46c1);
+        background: linear-gradient(#00CED1,#1E90FF, #00008B);
     }
     
     .btn-secondary-custom {
-        background: rgba(108, 117, 125, 0.1);
+        background:  #ffd700;
         border: 2px solid rgba(108, 117, 125, 0.2);
         border-radius: 12px;
         padding: 15px 30px;
         font-weight: 600;
-        color: #6c757d;
+        color: #008b8b;
         transition: all 0.3s ease;
     }
     
     .btn-secondary-custom:hover {
-        background: rgba(108, 117, 125, 0.2);
+        background:  #ffd700;
         transform: translateY(-2px);
-        color: #495057;
+        color: #008b8b;
     }
     
     .info-card {
@@ -115,9 +109,6 @@
                 <div class="content-wrapper">
                     <!-- Header mejorado -->
                     <div class="text-center mb-5">
-                        <div class="mb-4">
-                            <i class="fas fa-book-open cooking-icon" style="font-size: 4rem;"></i>
-                        </div>
                         <h1 class="display-4 fw-bold text-white mb-3">
                             <i class="fas fa-plus-circle me-2"></i>
                             Crear Nueva Colección
@@ -173,7 +164,7 @@
                                     </div>
                                 @enderror
                                 <small class="form-text text-muted mt-2">
-                                    <i class="fas fa-lightbulb me-1"></i>
+                                    <i class="fas fa-lightbulb text-warning me-1"></i>
                                     Puedes agregar recetas a tu colección después de crearla.
                                 </small>
                             </div>

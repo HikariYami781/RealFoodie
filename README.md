@@ -23,7 +23,7 @@ Ideas en [este repositorio](https://github.com).
 
 ## Cosas por hacer 
 - Subir a Visual Código Proyecto [Hecho]
-- Imágenes vistas en la memoria [Faltan Fotos]
+- Imágenes vistas en la memoria [Faltan Fotos] -> Añadir también los nuevos cambios
 - Entregar última parte Memoria y acabar código
 - Foto Modelo Relacional [Hecho]
 - Script Prueba BBDD [Hecho]
@@ -37,7 +37,7 @@ Ideas en [este repositorio](https://github.com).
 - Cambiar imágenes [Hecho]
 - Valoraciones con estrellas [Hecho]
 - Seguidores
-- Vistas Colecciones [Hecho] -> Revisar y subir a Hostalia cuando cambie un poco diseño y algunos fallos
+- Vistas Colecciones [Hecho]
 - Borrar Datos de la BD y meter datos reales, con fotos y todo
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida/ Notificaciones
 - Recuperación de Contraseña 

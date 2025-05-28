@@ -26,7 +26,7 @@
     }
     
     .btn-primary-custom {
-        background: linear-gradient(45deg, #667eea, #764ba2);
+        background: transparent;
         border: none;
         border-radius: 12px;
         padding: 12px 25px;
@@ -34,7 +34,7 @@
         font-size: 14px;
         transition: all 0.3s ease;
         box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        color: white;
+        color: #667eea;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
@@ -43,18 +43,18 @@
     .btn-primary-custom:hover {
         transform: translateY(-2px);
         box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
-        background: linear-gradient(45deg, #5a67d8, #6b46c1);
+        background: #667eea;
         color: white;
         text-decoration: none;
     }
     
     .btn-secondary-custom {
-        background: rgba(108, 117, 125, 0.1);
+        background: #fffafa;
         border: 2px solid rgba(108, 117, 125, 0.2);
         border-radius: 12px;
         padding: 12px 25px;
         font-weight: 600;
-        color: #6c757d;
+        color:#008b8b;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
@@ -62,9 +62,9 @@
     }
     
     .btn-secondary-custom:hover {
-        background: rgba(108, 117, 125, 0.2);
+        background: #fffafa;
         transform: translateY(-2px);
-        color: #495057;
+        color:#008b8b;
         text-decoration: none;
     }
     
@@ -242,12 +242,14 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="mb-2">
-                                    <i class="fas fa-clock text-warning" style="font-size: 2rem;"></i>
+                                    <i class="fas fa-clock text-secondary" style="font-size: 2rem;"></i>
                                 </div>
                                 <h4 class="fw-bold text-dark mb-1">
                                     @php
                                         $tiempoTotal = $coleccion->recetas->sum(function($receta) {
-                                            return $receta->preparacion + $receta->coccion;
+                                            $preparacion = is_numeric($receta->preparacion) ? (int)$receta->preparacion : 0;
+                                            $coccion = is_numeric($receta->coccion) ? (int)$receta->coccion : 0;
+                                            return $preparacion + $coccion;
                                         });
                                     @endphp
                                     {{ $tiempoTotal }} min
@@ -263,7 +265,7 @@
                                         $valoracionPromedio = 0;
                                         $totalValoraciones = 0;
                                         foreach($coleccion->recetas as $receta) {
-                                            if($receta->valoraciones->count() > 0) {
+                                            if($receta->valoraciones && $receta->valoraciones->count() > 0) {
                                                 $valoracionPromedio += $receta->valoraciones->avg('puntuacion');
                                                 $totalValoraciones++;
                                             }
@@ -331,7 +333,7 @@
                                             <div class="d-flex justify-content-between align-items-center mb-3">
                                                 <div class="d-flex align-items-center small text-muted">
                                                     <i class="fas fa-user me-1"></i>
-                                                    <span>{{ $receta->user->nombre }}</span>
+                                                    <span>{{ $receta->user->nombre ?? 'Usuario' }}</span>
                                                 </div>
                                                 @if($receta->categoria)
                                                     <span class="category-badge">
@@ -343,7 +345,7 @@
                                             <!-- Valoración y tiempo -->
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    @if($receta->valoraciones->count() > 0)
+                                                    @if($receta->valoraciones && $receta->valoraciones->count() > 0)
                                                         @php
                                                             $promedio = $receta->valoraciones->avg('puntuacion');
                                                         @endphp
@@ -360,7 +362,12 @@
                                                 
                                                 <div class="d-flex align-items-center small text-muted">
                                                     <i class="fas fa-clock me-1"></i>
-                                                    <span>{{ $receta->preparacion + $receta->coccion }} min</span>
+                                                    @php
+                                                        $preparacion = is_numeric($receta->preparacion) ? (int)$receta->preparacion : 0;
+                                                        $coccion = is_numeric($receta->coccion) ? (int)$receta->coccion : 0;
+                                                        $tiempoTotal = $preparacion + $coccion;
+                                                    @endphp
+                                                    <span>{{ $tiempoTotal }} min</span>
                                                 </div>
                                             </div>
                                         </div>
