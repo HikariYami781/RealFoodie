@@ -140,6 +140,60 @@
         .small-stars {
             font-size: 0.9em;
         }
+
+
+        .author-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .author-card:hover {
+            background-color: #f8f9fa !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .author-link:hover {
+            color: #007bff !important;
+        }
+
+        .author-avatar {
+            transition: transform 0.3s ease;
+        }
+
+        .author-card:hover .author-avatar {
+            transform: scale(1.05);
+        }
+
+        .follow-author-btn {
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            font-weight: 500;
+            padding: 6px 16px;
+        }
+
+        .follow-author-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .author-card {
+            position: relative;
+        }
+
+        .author-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+
+        .follow-author-btn {
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
@@ -177,11 +231,83 @@
 
                         </div>
 
-                        
-                        <div class="mb-3">
-                            <h5>Autor</h5>
-                            <p>{{ $receta->user->nombre }}</p>
+             <!--Autor-->           
+            <div class="mb-4">
+                <h5 class="mb-3">
+                    <i class="fas fa-chef-hat me-2"></i>Creado por
+                </h5>
+                <div class="author-card p-3 bg-light rounded-3 border">
+                    <div class="d-flex align-items-center">
+                        <!-- Foto de perfil del autor -->
+                        <div class="me-3">
+                            @if($receta->user->foto_perfil)
+                                <img src="{{ asset('storage/fotos_perfil/' . $receta->user->foto_perfil) }}" 
+                                    class="rounded-circle author-avatar" 
+                                    alt="Foto de perfil de {{ $receta->user->nombre }}"
+                                    style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            @else
+                                <img src="{{ asset('images/default-profile.jpg') }}" 
+                                    class="rounded-circle author-avatar"
+                                    alt="Foto de perfil por defecto"
+                                    style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            @endif
                         </div>
+
+                    
+                        <!-- Información del autor -->
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">
+                                <a href="{{ route('users.show', $receta->user) }}" 
+                                class="text-decoration-none fw-bold author-link"
+                                style="color: #495057; transition: color 0.3s ease;">
+                                    {{ $receta->user->nombre }}
+                                </a>
+                            </h6>
+                            <div class="d-flex align-items-center text-muted small">
+                                <span class="me-3">
+                                    <i class="fas fa-utensils me-1"></i>
+                                    {{ $receta->user->recetas->count() }} recetas
+                                </span>
+                                <span class="me-3">
+                                    <i class="fas fa-users me-1"></i>
+                                    {{ $receta->user->seguidores->count() }} seguidores
+                                </span>
+                                <span>
+                                    <i class="fas fa-calendar me-1"></i>
+                                    Publicada {{ $receta->created_at->diffForHumans() }}
+                                </span>
+                            </div>
+                            
+                            @if($receta->user->descripcion)
+                                <p class="mb-0 mt-2 text-muted small">
+                                    "{{ Str::limit($receta->user->descripcion, 80) }}"
+                                </p>
+                            @endif
+                        </div>
+                        
+                        <!-- Botón seguir/dejar de seguir -->
+                        @auth
+                            @if(Auth::id() !== $receta->user->id)
+                                <div class="ms-3">
+                                    <form action="{{ route('users.toggleFollow', $receta->user) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm {{ Auth::user()->siguiendo->contains($receta->user->id) ? 'btn-outline-danger' : 'btn-primary' }} follow-author-btn">
+                                            <i class="{{ Auth::user()->siguiendo->contains($receta->user->id) ? 'fas fa-user-minus' : 'fas fa-user-plus' }} me-1"></i>
+                                            {{ Auth::user()->siguiendo->contains($receta->user->id) ? 'Dejar de seguir' : 'Seguir' }}
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+                        @else
+                            <div class="ms-3">
+                                <a href="{{ route('login') }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Seguir
+                                </a>
+                            </div>
+                        @endauth
+                    </div>
+                </div>
+            </div>
 
 
                         <div class="mb-4">
@@ -529,7 +655,25 @@
                 }
             });
         }
-    })
+    });
+
+    // Hacer clickeable toda la tarjeta del autor
+document.addEventListener('DOMContentLoaded', function() {
+    const authorCard = document.querySelector('.author-card');
+    if (authorCard) {
+        authorCard.addEventListener('click', function(e) {
+            // Solo redirigir si no se clickeó el botón de seguir
+            if (!e.target.closest('.follow-author-btn')) {
+                const authorLink = this.querySelector('.author-link');
+                if (authorLink) {
+                    window.location.href = authorLink.href;
+                }
+            }
+        });
+    }
+});
+
+
 </script>
 
 </html>
