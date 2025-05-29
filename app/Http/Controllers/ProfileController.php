@@ -138,19 +138,39 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        // Validar la contraseña
+        $request->validate([
+            'password' => ['required', 'string'],
         ]);
 
         $user = $request->user();
+        
+        // Verificar que la contraseña sea correcta
+        if (!Hash::check($request->password, $user->password)) {
+            return Redirect::route('profile.edit')
+                ->withErrors(['delete_password' => 'La contraseña no es correcta.'])
+                ->with('show_delete_modal', true);
+        }
 
-        Auth::logout();
+        try {
+            // Eliminar foto de perfil si existe
+            if ($user->foto_perfil) {
+                Storage::disk('public')->delete('fotos_perfil/' . $user->foto_perfil);
+            }
+            
+            Auth::logout();
+            $user->delete();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+            return Redirect::to('/')->with('success', 'Tu cuenta ha sido eliminada correctamente.');
+            
+        } catch (\Exception $e) {
+            Log::error('Error al eliminar cuenta: ' . $e->getMessage());
+            
+            return Redirect::route('profile.edit')
+                ->withErrors(['delete_password' => 'Hubo un error al eliminar la cuenta. Inténtalo de nuevo.'])
+                ->with('show_delete_modal', true);
+        }
     }
 }

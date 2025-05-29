@@ -3,7 +3,7 @@
 @section('content')
 <style>
     body {
-        background-color: moccasin; 
+        background: linear-gradient( to left, #E0C3FC,#8EC5FC); 
         position: relative
     }
     
@@ -86,7 +86,7 @@
                             <a href="{{ route('profile.edit') }}" class="btn btn-outline-secondary w-100 mb-2">
                                 <i class="fas fa-edit me-1"></i>Editar perfil
                             </a>
-                            <!-- Botón para ir a Mis Colecciones - siempre visible -->
+                            <!-- Botón para ir a Mis Colecciones - solo aparece aquí -->
                             <a href="{{ route('colecciones.index') }}" class="btn btn-outline-primary w-100">
                                 <i class="fas fa-folder me-1"></i>Mis Colecciones
                             </a>
@@ -319,15 +319,6 @@
                                         </div>
                                     @endforeach
                                 </div>
-                                
-                                <!-- Botón para ir a la página completa de colecciones -->
-                                @if(Auth::check() && Auth::id() === $user->id)
-                                    <div class="text-center mt-4">
-                                        <a href="{{ route('colecciones.index') }}" class="btn btn-primary">
-                                            <i class="fas fa-folder-open me-1"></i>Ver todas mis colecciones
-                                        </a>
-                                    </div>
-                                @endif
                             @else
                                 <div class="text-center py-5">
                                     <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
@@ -335,14 +326,9 @@
 
                                     @if(Auth::check() && Auth::id() === $user->id)
                                         <p class="text-muted">Organiza tus recetas favoritas en colecciones temáticas.</p>
-                                        <div class="d-flex gap-2 justify-content-center">
-                                            <a href="{{ route('colecciones.create') }}" class="btn btn-primary mt-2">
-                                                <i class="fas fa-plus me-1"></i>Crear colección
-                                            </a>
-                                            <a href="{{ route('colecciones.index') }}" class="btn btn-outline-primary mt-2">
-                                                <i class="fas fa-folder me-1"></i>Mis colecciones
-                                            </a>
-                                        </div>
+                                        <a href="{{ route('colecciones.create') }}" class="btn btn-primary mt-2">
+                                            <i class="fas fa-plus me-1"></i>Crear colección
+                                        </a>
                                     @else
                                         <p class="text-muted">Este usuario aún no ha creado colecciones.</p>
                                     @endif

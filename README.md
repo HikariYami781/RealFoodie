@@ -54,7 +54,8 @@ Ideas en [este repositorio](https://github.com).
 a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho]
 - Si el usuario esta logeado no puede volver al login o a la página de welcome si se mueve con las flechas en el navegador [Hecho]
 - Cuando quieres agregar a Fav, sale que ha sido un éxito, pero en el perfil no aparece [Hecho]
-- Cuando el usuario va a eliminar su cuenta no puede escribir, parece que la pagina se queda congelada
+- Cuando el usuario va a eliminar su cuenta no puede escribir, parece que la pagina se queda congelada [Hecho]
+- El Botón Ver Mis colecciones que esté debajo de "Editar Perfil" y no duplicado también en la pestaña de las colecciones [Hecho]
 
 
 ## Mejoras

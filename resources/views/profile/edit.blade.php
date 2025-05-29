@@ -3,7 +3,7 @@
 @section('content')
 <style>
     body {
-        background-color: peachpuff; 
+        background:linear-gradient( to left, #E0C3FC,#8EC5FC);
         position: relative
     }
     
@@ -19,6 +19,94 @@
     
     .card:hover {
         transform: translateY(-5px);
+    }
+    
+    /* Modal personalizado */
+    .custom-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .custom-modal-overlay.show {
+        display: flex;
+    }
+    
+    .custom-modal {
+        background: white;
+        border-radius: 0.5rem;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+        from { 
+            opacity: 0; 
+            transform: scale(0.9) translateY(-50px); 
+        }
+        to { 
+            opacity: 1; 
+            transform: scale(1) translateY(0); 
+        }
+    }
+    
+    .custom-modal-header {
+        background-color: #dc3545;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 0.5rem 0.5rem 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .custom-modal-body {
+        padding: 1.5rem;
+    }
+    
+    .custom-modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #dee2e6;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+    }
+    
+    .close-btn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: background-color 0.2s;
+    }
+    
+    .close-btn:hover {
+        background-color: rgba(255, 255, 255, 0.1);
     }
 </style>
 
@@ -150,52 +238,188 @@
                         Antes de eliminar tu cuenta, por favor descarga cualquier dato o información que desees conservar.
                     </p>
                     
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                    <button type="button" class="btn btn-danger" onclick="openDeleteModal()">
                         <i class="fas fa-trash-alt me-1"></i>Eliminar Cuenta
                     </button>
-                    
-                    <!-- Modal para confirmar eliminación -->
-                    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteAccountModalLabel">Confirmar eliminación</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>¿Estás seguro de que quieres eliminar tu cuenta?</p>
-                                    <p class="text-muted small">Una vez que tu cuenta sea eliminada, todos sus recursos y datos serán permanentemente borrados.
-                                    Por favor, ingresa tu contraseña para confirmar que deseas eliminar permanentemente tu cuenta.</p>
-                                    
-                                    <form id="delete-account-form" method="post" action="{{ route('profile.destroy') }}">
-                                        @csrf
-                                        @method('delete')
-                                        
-                                        <div class="mb-3">
-                                            <label for="delete-password" class="form-label">Contraseña</label>
-                                            <input type="password" class="form-control" id="delete-password" name="password">
-                                            @error('password', 'userDeletion')
-                                                <div class="text-danger mt-1">{{ $message }}</div>
-                                            @enderror
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                    <button type="submit" form="delete-account-form" class="btn btn-danger">Eliminar Cuenta</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
             
             <div class="text-center mt-4">
-                <a href="{{ route('users.show', Auth::user()) }}" class="btn btn-outline-secondary">
+                <a href="{{ route('users.show', Auth::user()) }}" class="btn btn-secondary">
                     <i class="fas fa-arrow-left me-1"></i>Volver a mi perfil
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal personalizado para confirmar eliminación -->
+<div id="deleteAccountModal" class="custom-modal-overlay" onclick="closeDeleteModal(event)">
+    <div class="custom-modal" onclick="event.stopPropagation()">
+        <div class="custom-modal-header">
+            <h5>
+                <i class="fas fa-exclamation-triangle me-2"></i>Confirmar eliminación
+            </h5>
+            <button type="button" class="close-btn" onclick="closeDeleteModal()" aria-label="Cerrar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="custom-modal-body">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <div>
+                    <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+                </div>
+            </div>
+            
+            <p class="mb-3">¿Estás seguro de que quieres eliminar tu cuenta permanentemente?</p>
+            <p class="text-muted small mb-4">
+                Todos tus datos, recetas, colecciones y configuraciones serán eliminados de forma permanente.
+                Por favor, ingresa tu contraseña para confirmar esta acción.
+            </p>
+            
+            <form id="delete-account-form" method="post" action="{{ route('profile.destroy') }}">
+                @csrf
+                @method('delete')
+                
+                <div class="mb-3">
+                    <label for="delete-password" class="form-label">
+                        <i class="fas fa-lock me-1"></i>Contraseña Actual
+                    </label>
+                    <input type="password" 
+                           class="form-control" 
+                           id="delete-password" 
+                           name="password" 
+                           placeholder="Ingresa tu contraseña actual"
+                           required
+                           autocomplete="current-password">
+                    <div id="password-error" class="text-danger mt-1" style="display: none;"></div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="custom-modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                <i class="fas fa-times me-1"></i>Cancelar
+            </button>
+            <button type="button" class="btn btn-danger" id="confirm-delete-btn" onclick="submitDeleteForm()">
+                <i class="fas fa-trash-alt me-1"></i>Eliminar Cuenta Permanentemente
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+const deleteModal = document.getElementById('deleteAccountModal');
+const passwordInput = document.getElementById('delete-password');
+const passwordError = document.getElementById('password-error');
+const confirmBtn = document.getElementById('confirm-delete-btn');
+
+// Funciones del modal
+function openDeleteModal() {
+    deleteModal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    
+    setTimeout(() => {
+        passwordInput.focus();
+        passwordInput.select();
+    }, 100);
+}
+
+function closeDeleteModal(event) {
+    // Si se hace clic en el overlay pero no en el modal interno, cerrar
+    if (event && event.target !== deleteModal) {
+        return;
+    }
+    
+    deleteModal.classList.remove('show');
+    document.body.style.overflow = '';
+    
+    // Limpiar formulario
+    passwordInput.value = '';
+    passwordInput.classList.remove('is-invalid');
+    passwordError.style.display = 'none';
+    passwordError.textContent = '';
+    
+    // Restaurar botón
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Eliminar Cuenta Permanentemente';
+}
+
+function showPasswordError(message) {
+    passwordInput.classList.add('is-invalid');
+    passwordError.textContent = message;
+    passwordError.style.display = 'block';
+}
+
+function hidePasswordError() {
+    passwordInput.classList.remove('is-invalid');
+    passwordError.style.display = 'none';
+    passwordError.textContent = '';
+}
+
+function submitDeleteForm() {
+    const password = passwordInput.value.trim();
+    
+    if (!password) {
+        showPasswordError('Por favor, ingresa tu contraseña para confirmar la eliminación.');
+        passwordInput.focus();
+        return false;
+    }
+    
+    hidePasswordError();
+    
+    if (confirm('¿Estás completamente seguro? Esta acción NO se puede deshacer.')) {
+        // Deshabilitar botón y mostrar estado de carga
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Eliminando...';
+        
+        // Enviar formulario
+        document.getElementById('delete-account-form').submit();
+    }
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Cerrar modal con Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && deleteModal.classList.contains('show')) {
+            closeDeleteModal();
+        }
+    });
+    
+    // Enter en el campo de contraseña
+    passwordInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            submitDeleteForm();
+        }
+    });
+    
+    // Limpiar error cuando se escriba
+    passwordInput.addEventListener('input', function() {
+        if (this.value.trim().length > 0) {
+            hidePasswordError();
+        }
+    });
+    
+    // Mostrar modal si hay errores del servidor
+    @if($errors->has('delete_password') || session('show_delete_modal'))
+        setTimeout(function() {
+            openDeleteModal();
+            @if($errors->has('delete_password'))
+                showPasswordError('{{ $errors->first('delete_password') }}');
+            @endif
+        }, 100);
+    @endif
+});
+
+// Prevenir el scroll del body cuando el modal esté abierto
+deleteModal.addEventListener('wheel', function(e) {
+    e.stopPropagation();
+});
+</script>
+
 @endsection
