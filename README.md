@@ -40,7 +40,6 @@ Ideas en [este repositorio](https://github.com).
 - Vistas Colecciones [Hecho]
 -Foto por defecto usuarios [Hecho]
 - Borrar Datos de la BD y meter datos reales, con fotos y todo 
-- Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida
 - Header / ponerlo en todas las vistas
 - Footer (En algunas vistas no va a estar presente)
 - Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal -> Quizás una Casa
@@ -59,6 +58,7 @@ a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho
 
 
 ## Mejoras
+- Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida
 - Recuperación de Contraseña
 - Poner los Comentarios con otro diseño 
 - Filtros para el buscador
