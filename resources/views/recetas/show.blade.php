@@ -246,7 +246,7 @@
                                     alt="Foto de perfil de {{ $receta->user->nombre }}"
                                     style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                             @else
-                                <img src="{{ asset('images/default-profile.jpg') }}" 
+                                <img src="{{ asset('images/x_defecto.jpg') }}" 
                                     class="rounded-circle author-avatar"
                                     alt="Foto de perfil por defecto"
                                     style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">

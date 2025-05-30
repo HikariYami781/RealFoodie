@@ -70,7 +70,8 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::get('/consultas/usuarios-activos', [ConsultasController::class, 'usuariosActivos'])->name('consultas.usuarios-activos');
     Route::get('/consultas/ingredientes-populares', [ConsultasController::class, 'ingredientesPopulares'])->name('consultas.ingredientes-populares');
     
-    // Usuarios
+    // Usuarios - RUTAS ACTUALIZADAS
+    Route::get('/usuarios', [UserController::class, 'index'])->name('users.index'); // Nueva ruta para listar usuarios
     Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show');
     Route::post('/usuarios/{user}/seguir', [UserController::class, 'toggleFollow'])->name('users.toggleFollow');
     Route::get('/usuarios/{user}/seguidores', [UserController::class, 'followers'])->name('users.followers');

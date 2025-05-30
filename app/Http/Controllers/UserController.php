@@ -37,17 +37,17 @@ class UserController extends Controller
     public function toggleFollow(User $user)
     {
         if (!Auth::check() || Auth::id() === $user->id) {
-            return back();
+            return back()->with('error', 'No puedes seguirte a ti mismo.');
         }
         
         $loggedUser = Auth::user();
         
         if ($loggedUser->siguiendo()->where('seguido_id', $user->id)->exists()) {
             $loggedUser->siguiendo()->detach($user->id);
-            $message = 'Has dejado de seguir a este usuario.';
+            $message = 'Has dejado de seguir a ' . $user->nombre . '.';
         } else {
             $loggedUser->siguiendo()->attach($user->id);
-            $message = 'Ahora estás siguiendo a este usuario.';
+            $message = 'Ahora estás siguiendo a ' . $user->nombre . '.';
         }
         
         return back()->with('success', $message);
@@ -58,8 +58,15 @@ class UserController extends Controller
      */
     public function followers(User $user)
     {
-        $seguidores = $user->seguidores()->paginate(20);
-        return view('users.followers', compact('user', 'seguidores'));
+        // Cargamos los seguidores con sus relaciones necesarias para mostrar estadísticas
+        $seguidores = $user->seguidores()
+            ->withCount(['recetas', 'seguidores'])
+            ->paginate(20);
+        
+        // Cargamos las relaciones del usuario principal
+        $user->loadCount(['seguidores', 'siguiendo']);
+        
+        return view('seguidores.seguir', compact('user', 'seguidores'));
     }
     
     /**
@@ -67,7 +74,32 @@ class UserController extends Controller
      */
     public function following(User $user)
     {
-        $siguiendo = $user->siguiendo()->paginate(20);
-        return view('users.following', compact('user', 'siguiendo'));
+        // Cargamos a quién sigue con sus relaciones necesarias para mostrar estadísticas
+        $siguiendo = $user->siguiendo()
+            ->withCount(['recetas', 'seguidores'])
+            ->paginate(20);
+        
+        // Cargamos las relaciones del usuario principal
+        $user->loadCount(['seguidores', 'siguiendo']);
+        
+        return view('seguidores.siguiendo', compact('user', 'siguiendo'));
+    }
+    
+    /**
+     * Search users (opcional - para descubrir nuevos usuarios)
+     */
+    public function index(Request $request)
+    {
+        $query = User::query();
+        
+        if ($request->filled('search')) {
+            $query->where('nombre', 'like', '%' . $request->search . '%')
+                  ->orWhere('email', 'like', '%' . $request->search . '%');
+        }
+        
+        $usuarios = $query->withCount(['recetas', 'seguidores'])
+            ->paginate(12);
+        
+        return view('users.index', compact('usuarios'));
     }
 }

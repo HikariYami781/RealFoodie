@@ -36,11 +36,12 @@ Ideas en [este repositorio](https://github.com).
 - Subir resolución Imágenes [Hecho]
 - Cambiar imágenes [Hecho]
 - Valoraciones con estrellas [Hecho]
-- Seguidores -> falta terminar el controlador, cambiar las rutas para que apunten a las vistas y más [1/2]
+- Seguidores ->  [Hecho]
 - Vistas Colecciones [Hecho]
-- Borrar Datos de la BD y meter datos reales, con fotos y todo
-- Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida/ Notificaciones
-- Recuperación de Contraseña 
+-Foto por defecto usuarios [Hecho]
+- Recuperación de Contraseña
+- Borrar Datos de la BD y meter datos reales, con fotos y todo 
+- Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida
 - Header / ponerlo en todas las vistas
 - Footer (En algunas vistas no va a estar presente)
 - Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal -> Quizás una Casa

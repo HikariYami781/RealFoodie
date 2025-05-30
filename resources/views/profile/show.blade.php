@@ -25,6 +25,36 @@
         border-bottom: 3px solid #0d6efd;
         font-weight: bold;
     }
+
+     .counter-link {
+        text-decoration: none !important;
+        color: inherit;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .counter-link:hover {
+        text-decoration: none !important;
+        color: inherit;
+    }
+    
+    /* Tooltip que aparece al hacer hover */
+    .counter-link:hover::after {
+        content: '👆 Click para ver';
+        position: absolute;
+        bottom: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: white;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 1000;
+        animation: fadeInTooltip 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
 </style>
 
 <div class="container">
@@ -38,7 +68,7 @@
                             class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;" 
                             alt="Foto de perfil de {{ $user->nombre }}">
                     @else
-                        <img src="{{ asset('images/default-profile.jpg') }}" 
+                        <img src="{{ asset('images/x_defecto.jpg') }}" 
                             class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;"
                             alt="Foto de perfil por defecto">
                     @endif
@@ -55,14 +85,14 @@
 
                     <!-- Contadores de seguidores y seguidos -->
                     <div class="d-flex justify-content-around mt-4">
-                        <a href="{{ route('users.followers', $user) }}" class="text-decoration-none">
+                        <a href="{{ route('users.followers', $user) }}" class="counter-link">
                             <div class="text-center">
                                 <h5>{{ $user->seguidores->count() }}</h5>
                                 <span>Seguidores</span>
                             </div>
                         </a>
                         
-                        <a href="{{ route('users.following', $user) }}" class="text-decoration-none">
+                        <a href="{{ route('users.following', $user) }}" class="counter-link">
                             <div class="text-center">
                                 <h5>{{ $user->siguiendo->count() }}</h5>
                                 <span>Siguiendo</span>
