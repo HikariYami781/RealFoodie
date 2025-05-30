@@ -111,7 +111,7 @@
                             class="rounded-circle profile-img mb-3" 
                             alt="Foto de perfil de {{ $user->nombre }}">
                     @else
-                        <img src="{{ asset('images/default-profile.jpg') }}" 
+                        <img src="{{ asset('images/x_defecto.jpg') }}" 
                             class="rounded-circle profile-img mb-3"
                             alt="Foto de perfil por defecto">
                     @endif

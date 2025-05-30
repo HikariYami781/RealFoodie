@@ -1,6 +1,6 @@
 <footer class="footer bg-dark text-white mt-auto">
     <div class="container text-center py-2">
-        <p class="mb-0">{{ date('Y') }} RealFoodie-Trabajo realizado por Paula</p>
+        <p class="mb-0">{{ date('Y') }} RealFoodie - Donde cada receta cuenta una historia</p>
     </div>
 </footer>
 

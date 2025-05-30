@@ -39,7 +39,6 @@ Ideas en [este repositorio](https://github.com).
 - Seguidores ->  [Hecho]
 - Vistas Colecciones [Hecho]
 -Foto por defecto usuarios [Hecho]
-- Recuperación de Contraseña
 - Borrar Datos de la BD y meter datos reales, con fotos y todo 
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida
 - Header / ponerlo en todas las vistas
@@ -60,12 +59,14 @@ a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho
 
 
 ## Mejoras
-- Que aparezca el nombre del usuario que las ha creado con la foto y puedes ir a su perfil (Recetas)
+- Recuperación de Contraseña
 - Poner los Comentarios con otro diseño 
-- Cuando vayas a ver las recetas de los usuarios más activos e ingredientes más usados, que puedas pulsarlas y te lleven a la receta (Quizás que se vea también la imagen)
 - Filtros para el buscador
 - Tener algo en el Header que muestre un punto rojo con la cantidad de notificaciones que tenga el usuario
 - Cambiar la página principal un poco el diseño 
+- Aumentar Avatares por defecto
+- Buscar usuarios y usuarios recoendados
+- Página adicional donde puedas ver las publicaciones de los usuarios que sigues
 
   
 >>>>>>> 4d02988aaf92acf40dbde865e9410916b8f7e78a

@@ -165,7 +165,7 @@
                                         <!-- Sección para crear nueva colección -->
                                         <div class="mb-4">
                                             <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h6 class="mb-0">Crear nueva colección:</h6>
+                                                <h6 class="mb-0">Crear nueva colección de Recetas:</h6>
                                                 <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleCrearColeccion({{ $receta->id }})">
                                                     <i class="fas fa-plus"></i> Nueva
                                                 </button>

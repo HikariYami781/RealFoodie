@@ -111,7 +111,7 @@
                             class="rounded-circle profile-img mb-3" 
                             alt="Foto de perfil de {{ $user->nombre }}">
                     @else
-                        <img src="{{ asset('images/default-profile.jpg') }}" 
+                        <img src="{{ asset('images/x_defecto.jpg') }}" 
                             class="rounded-circle profile-img mb-3"
                             alt="Foto de perfil por defecto">
                     @endif
@@ -221,7 +221,7 @@
                     </p>
                     
                     @if(Auth::check() && Auth::id() === $user->id)
-                        <a href="{{ route('home') }}" class="btn btn-primary mt-3">
+                        <a href="{{ route('home') }}" class="btn btn-primary mt-3" style="display: none;">
                             <i class="fas fa-search me-1"></i>Descubrir usuarios
                         </a>
                     @endif

@@ -111,7 +111,7 @@
                     <div class="text-center mb-5">
                         <h1 class="display-4 fw-bold text-white mb-3">
                             <i class="fas fa-plus-circle me-2"></i>
-                            Crear Nueva Colección
+                            Crear Nueva Colección de Recetas
                         </h1>
                     </div>
 
@@ -200,7 +200,7 @@
                                 </h5>
                                 <div class="mb-2">
                                     <small class="text-dark d-flex align-items-center">                                        
-                                        <span>Aprendemos a cocinar con la cocina de otros y en un momento dado, hacemos la nuestra</span>
+                                        <strong>Aprendemos a cocinar con la cocina de otros y en un momento dado, hacemos la nuestra</strong>
                                     </small>
                                 </div>
                             </div>
