@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Editar Perfil')
+
 @section('content')
 <style>
     body {

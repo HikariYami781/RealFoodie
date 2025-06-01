@@ -40,9 +40,8 @@ Ideas en [este repositorio](https://github.com).
 - Vistas Colecciones [Hecho]
 -Foto por defecto usuarios [Hecho]
 - Borrar Datos de la BD y meter datos reales, con fotos y todo 
-- Header / ponerlo en todas las vistas
-- Footer (En algunas vistas no va a estar presente)
-- Botón de "Volver a Consultas" cambiar a un icono de volver a la página principal -> Quizás una Casa
+- Header / ponerlo en la mayoría de vistas[Hecho]
+- Footer (En algunas vistas no va a estar presente) [Hecho]
 
 
 
@@ -57,7 +56,7 @@ a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho
 - El Botón Ver Mis colecciones que esté debajo de "Editar Perfil" y no duplicado también en la pestaña de las colecciones [Hecho]
 
 
-## Mejoras
+## Mejoras [Puesto en Memoria]
 - Configurar para que llegue al correo cuando se registran un mensaje de Bienvenida
 - Recuperación de Contraseña
 - Poner los Comentarios con otro diseño 

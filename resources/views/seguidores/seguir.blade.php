@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Seguidores')
+
 @section('content')
 <style>
     body {
