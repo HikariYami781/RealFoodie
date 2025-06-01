@@ -69,7 +69,7 @@
                                     <td class="text-end">
                                         <a href="{{ route('users.show', $usuario->id) }}" 
                                         class="btn btn-primary btn-sm">
-                                            Ver Recetas
+                                            Ver Detalles
                                         </a>
                                     </td>
                                 </tr>

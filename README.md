@@ -65,7 +65,7 @@ a usar al no haber pulsado el botón de cerrar sesión, esta sigue activa [Hecho
 - Tener algo en el Header que muestre un punto rojo con la cantidad de notificaciones que tenga el usuario
 - Cambiar la página principal un poco el diseño 
 - Aumentar Avatares por defecto
-- Buscar usuarios y usuarios recoendados
+- Buscar usuarios y usuarios recomendados
 - Página adicional donde puedas ver las publicaciones de los usuarios que sigues
 
   
