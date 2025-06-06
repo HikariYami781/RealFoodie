@@ -40,7 +40,7 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::put('/recetas/{receta}', [RecetaController::class, 'update'])->name('recetas.update');
     Route::delete('/recetas/{receta}', [RecetaController::class, 'destroy'])->name('recetas.destroy');
     Route::post('/recetas/{receta}/favorite', [RecetaController::class, 'favorite'])->name('recetas.favorite');
-    Route::post('/recetas/{receta}/valorar', [RecetaController::class, 'rate'])->name('recetas.rate');
+    Route::post('/recetas/{receta}/comentarios', [RecetaController::class, 'storeRatingWithComment'])->name('comentarios.storeWithRating');
     
     // Ingredientes 
     Route::get('/ingredientes/{ingrediente}', [IngredienteController::class, 'show'])->name('ingredientes.show');
@@ -70,7 +70,7 @@ Route::middleware(['auth', \App\Http\Middleware\PreventBackHistory::class])->gro
     Route::get('/consultas/usuarios-activos', [ConsultasController::class, 'usuariosActivos'])->name('consultas.usuarios-activos');
     Route::get('/consultas/ingredientes-populares', [ConsultasController::class, 'ingredientesPopulares'])->name('consultas.ingredientes-populares');
     
-    // Usuarios - RUTAS ACTUALIZADAS
+    // Usuarios
     Route::get('/usuarios', [UserController::class, 'index'])->name('users.index'); // Nueva ruta para listar usuarios
     Route::get('/usuarios/{user}', [UserController::class, 'show'])->name('users.show');
     Route::post('/usuarios/{user}/seguir', [UserController::class, 'toggleFollow'])->name('users.toggleFollow');
