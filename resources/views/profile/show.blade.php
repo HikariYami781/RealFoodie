@@ -57,6 +57,11 @@
         animation: fadeInTooltip 0.3s ease;
         box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
+
+    @keyframes fadeInTooltip {
+        from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
 </style>
 
 <div class="container">
@@ -65,21 +70,16 @@
             <div class="card">
                 <div class="card-body text-center">
                     <!-- Foto de perfil -->
-                    @if($user->foto_perfil)
-                        <img src="{{ asset('storage/fotos_perfil/' . $user->foto_perfil) }}" 
-                            class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;" 
-                            alt="Foto de perfil de {{ $user->nombre }}">
-                    @else
-                        <img src="{{ asset('images/x_defecto.jpg') }}" 
-                            class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;"
-                            alt="Foto de perfil por defecto">
-                    @endif
+                   <img src="{{ isset($user->foto_perfil) && $user->foto_perfil ? asset('fotos_perfil/' . $user->foto_perfil) : asset('images/x_defecto.jpg') }}" 
+                        class="rounded-circle img-fluid mb-3" style="width: 150px; height: 150px; object-fit: cover;" 
+                        alt="Foto de perfil de {{ $user->nombre }}"
+                        onerror="this.src='{{ asset('images/x_defecto.jpg') }}';this.onerror=null;">
 
                     <!-- Nombre de usuario -->
                     <h3 class="card-title">{{ $user->nombre }}</h3>
 
                     <!-- Descripción del usuario -->
-                    @if($user->descripcion)
+                    @if($user->descripcion && !empty(trim($user->descripcion)))
                         <p class="card-text">{{ $user->descripcion }}</p>
                     @else
                         <p class="card-text text-muted">Sin descripción</p>
@@ -89,14 +89,14 @@
                     <div class="d-flex justify-content-around mt-4">
                         <a href="{{ route('users.followers', $user) }}" class="counter-link">
                             <div class="text-center">
-                                <h5>{{ $user->seguidores->count() }}</h5>
+                                <h5>{{ $user->seguidores->count() ?? 0 }}</h5>
                                 <span>Seguidores</span>
                             </div>
                         </a>
                         
                         <a href="{{ route('users.following', $user) }}" class="counter-link">
                             <div class="text-center">
-                                <h5>{{ $user->siguiendo->count() }}</h5>
+                                <h5>{{ $user->siguiendo->count() ?? 0 }}</h5>
                                 <span>Siguiendo</span>
                             </div>
                         </a>
@@ -136,21 +136,21 @@
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="recetas-tab" data-bs-toggle="tab" data-bs-target="#recetas" 
                                 type="button" role="tab" aria-controls="recetas" aria-selected="true">
-                                <i class="fas fa-utensils me-1"></i>Mis recetas ({{ $recetas->count() }})
+                                <i class="fas fa-utensils me-1"></i>Mis recetas ({{ $recetas->total() ?? 0 }})
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="favoritas-tab" data-bs-toggle="tab" data-bs-target="#favoritas" 
                                 type="button" role="tab" aria-controls="favoritas" aria-selected="false">
-                                <i class="fas fa-heart me-1"></i>Favoritas ({{ $user->recetasFavoritas->count() }})
+                                <i class="fas fa-heart me-1"></i>Favoritas ({{ $favoritas->total() ?? 0 }})
                             </button>
                         </li>
 
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="colecciones-tab" data-bs-toggle="tab" data-bs-target="#colecciones" 
                                 type="button" role="tab" aria-controls="colecciones" aria-selected="false">
-                                <i class="fas fa-folder me-1"></i>Colecciones ({{ $user->colecciones->count() }})
+                                <i class="fas fa-folder me-1"></i>Colecciones ({{ $user->colecciones->count() ?? 0 }})
                             </button>
                         </li>
                     </ul>
@@ -158,27 +158,22 @@
                     <div class="tab-content" id="profileTabContent">
                         <!-- Tab: Recetas propias -->
                         <div class="tab-pane fade show active" id="recetas" role="tabpanel" aria-labelledby="recetas-tab">
-                            @if($recetas->count() > 0)
+                            @if(isset($recetas) && $recetas->count() > 0)
                                 <div class="row row-cols-1 row-cols-md-2 g-4">
                                     @foreach($recetas as $receta)
                                         <div class="col">
                                             <div class="card h-100">
-                                            @if($receta->imagen)
-                                                <!--En caso de que se este guardando la carpeta recetas-->
-                                                @if(strpos($receta->imagen, 'recetas/') === 0)
-                                                    <img src="{{ '/storage/' . $receta->imagen }}" 
-                                                        class="card-img-top" alt="{{ $receta->titulo }}" 
-                                                        style="height: 180px; object-fit: cover;">
+                                                @if($receta->imagen && !empty($receta->imagen))
+                                                    <img src="{{ file_exists(public_path($receta->imagen)) ? asset($receta->imagen) : asset('storage/' . $receta->imagen) }}" 
+                                                        alt="{{ $receta->titulo }}" 
+                                                        class="card-img-top" 
+                                                        style="height: 180px; object-fit: cover;"
+                                                        onerror="this.src='{{ asset('/images/no-image-placeholder.jpg') }}'">
                                                 @else
-                                                    <img src="{{ '/storage/recetas/' . $receta->imagen }}" 
-                                                        class="card-img-top" alt="{{ $receta->titulo }}" 
-                                                        style="height: 180px; object-fit: cover;">
+                                                    <div class="bg-light text-center pt-4" style="height: 180px;">
+                                                        <i class="fas fa-utensils fa-4x text-muted"></i>
+                                                    </div>
                                                 @endif
-                                            @else
-                                                <div class="bg-light text-center pt-4" style="height: 180px;">
-                                                    <i class="fas fa-utensils fa-4x text-muted"></i>
-                                                </div>
-                                            @endif
                                                 
                                                 <div class="card-body">
                                                     <h5 class="card-title">{{ $receta->titulo }}</h5>
@@ -227,17 +222,12 @@
                                     @foreach($favoritas as $favorita)
                                         <div class="col">
                                             <div class="card h-100">
-                                                @if($favorita->imagen)
-                                                    <!-- Verificamos la ruta correcta de la imagen -->
-                                                    @if(strpos($favorita->imagen, 'recetas/') === 0)
-                                                        <img src="{{ '/storage/' . $favorita->imagen }}" 
-                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
-                                                            style="height: 180px; object-fit: cover;">
-                                                    @else
-                                                        <img src="{{ '/storage/recetas/' . $favorita->imagen }}" 
-                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
-                                                            style="height: 180px; object-fit: cover;">
-                                                    @endif
+                                                @if($favorita->imagen && !empty($favorita->imagen))
+                                                    <img src="{{ file_exists(public_path($favorita->imagen)) ? asset($favorita->imagen) : asset('storage/' . $favorita->imagen) }}" 
+                                                        alt="{{ $favorita->titulo }}" 
+                                                        class="card-img-top" 
+                                                        style="height: 180px; object-fit: cover;"
+                                                        onerror="this.src='{{ asset('/images/no-image-placeholder.jpg') }}'">
                                                 @else
                                                     <div class="bg-light text-center pt-4" style="height: 180px;">
                                                         <i class="fas fa-utensils fa-4x text-muted"></i>
@@ -247,7 +237,7 @@
                                                 <div class="card-body">
                                                     <h5 class="card-title">{{ $favorita->titulo }}</h5>
                                                     <p class="card-text small text-muted">
-                                                        <i class="fas fa-user me-1"></i>{{ $favorita->user->nombre }}
+                                                        <i class="fas fa-user me-1"></i>{{ $favorita->user->nombre ?? 'Usuario desconocido' }}
                                                     </p>
 
                                                     <div class="d-flex justify-content-between align-items-center mt-3">
@@ -265,51 +255,9 @@
                                     @endforeach
                                 </div>
                                 
-                                <!-- Agregar paginación para favoritas -->
+                                <!-- Paginación para favoritas -->
                                 <div class="d-flex justify-content-center mt-4">
                                     {{ $favoritas->links() }}
-                                </div>
-                            @elseif($user->recetasFavoritas->count() > 0)
-                                <div class="row row-cols-1 row-cols-md-2 g-4">
-                                    @foreach($user->recetasFavoritas as $favorita)
-                                        <div class="col">
-                                            <div class="card h-100">
-                                                @if($favorita->imagen)
-                                                    <!-- Verificamos la ruta correcta de la imagen -->
-                                                    @if(strpos($favorita->imagen, 'recetas/') === 0)
-                                                        <img src="{{ '/storage/' . $favorita->imagen }}" 
-                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
-                                                            style="height: 180px; object-fit: cover;">
-                                                    @else
-                                                        <img src="{{ '/storage/recetas/' . $favorita->imagen }}" 
-                                                            class="card-img-top" alt="{{ $favorita->titulo }}" 
-                                                            style="height: 180px; object-fit: cover;">
-                                                    @endif
-                                                @else
-                                                    <div class="bg-light text-center pt-4" style="height: 180px;">
-                                                        <i class="fas fa-utensils fa-4x text-muted"></i>
-                                                    </div>
-                                                @endif
-                                                
-                                                <div class="card-body">
-                                                    <h5 class="card-title">{{ $favorita->titulo }}</h5>
-                                                    <p class="card-text small text-muted">
-                                                        <i class="fas fa-user me-1"></i>{{ $favorita->user->nombre }}
-                                                    </p>
-
-                                                    <div class="d-flex justify-content-between align-items-center mt-3">
-                                                        <a href="{{ route('recetas.show', $favorita) }}" class="btn btn-sm btn-outline-primary">
-                                                            <i class="fas fa-eye me-1"></i>Ver receta
-                                                        </a>
-                                                        <span class="badge bg-warning text-dark">
-                                                            <i class="fas fa-star me-1"></i>
-                                                            {{ $favorita->valoraciones->avg('puntuacion') ? number_format($favorita->valoraciones->avg('puntuacion'), 1) : 'N/A' }}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
                                 </div>
                             @else
                                 <div class="text-center py-5">
@@ -329,7 +277,7 @@
                         
                         <!-- Tab: Colecciones -->
                         <div class="tab-pane fade" id="colecciones" role="tabpanel" aria-labelledby="colecciones-tab">
-                            @if($user->colecciones->count() > 0)
+                            @if(isset($user->colecciones) && $user->colecciones->count() > 0)
                                 <div class="row row-cols-1 row-cols-md-2 g-4">
                                     @foreach($user->colecciones as $coleccion)
                                         <div class="col">
@@ -339,8 +287,11 @@
                                                         <i class="fas fa-folder me-2 text-primary"></i>
                                                         {{ $coleccion->nombre }}
                                                     </h5>
+                                                    @if($coleccion->descripcion && !empty(trim($coleccion->descripcion)))
+                                                        <p class="card-text small text-muted mb-2">{{ Str::limit($coleccion->descripcion, 100) }}</p>
+                                                    @endif
                                                     <p class="card-text small text-muted">
-                                                        <i class="fas fa-book-open me-1"></i>{{ $coleccion->recetas->count() }} recetas
+                                                        <i class="fas fa-book-open me-1"></i>{{ $coleccion->recetas->count() ?? 0 }} recetas
                                                     </p>
 
                                                     <a href="{{ route('colecciones.show', $coleccion) }}" class="btn btn-sm btn-outline-primary mt-2">
@@ -373,4 +324,26 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si Bootstrap está cargado
+    if (typeof bootstrap !== 'undefined') {
+        // Inicializar tooltips si existen
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+    
+    // Manejar errores de carga de imágenes
+    const images = document.querySelectorAll('img[onerror]');
+    images.forEach(img => {
+        img.addEventListener('error', function() {
+            console.log('Error cargando imagen:', this.src);
+        });
+    });
+});
+</script>
+
 @endsection
