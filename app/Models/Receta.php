@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-//use Laravel\Scout\Searchable;
 
 class Receta extends Model
 {
-    use HasFactory /*,Searchable*/;
+    use HasFactory;
 
     protected $fillable = [
         'titulo',
@@ -26,6 +25,11 @@ class Receta extends Model
     protected $casts = [
         'fecha_publicacion' => 'date',
         'publica' => 'boolean',
+		'preparacion' => 'integer',
+		'coccion' => 'integer',
+		'porciones' => 'integer',
+		'user_id' => 'integer',
+		'categoria_id' => 'integer',
     ];
 
     public function user()
