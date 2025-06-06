@@ -155,6 +155,14 @@
         border: none;
         box-shadow: 0 15px 35px rgba(255, 243, 205, 0.3);
     }
+
+    .owner-info {
+        background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(33, 150, 243, 0.2);
+    }
 </style>
 
 <div class="cooking-bg">
@@ -178,18 +186,22 @@
             <div class="row justify-content-center mb-4">
                 <div class="col-12">
                     <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb" style="background: transparent; margin-bottom: 0;">
-                            <li class="breadcrumb-item">
-                                <a href="{{ route('colecciones.index') }}" class="text-white-50 text-decoration-none">
-                                    <i class="fas fa-collections me-1"></i>
-                                    Mis Colecciones
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item active text-white" aria-current="page">
-                                {{ $coleccion->nombre }}
-                            </li>
-                        </ol>
-                    </nav>
+						<ol class="breadcrumb" style="background: transparent; margin-bottom: 0;">
+							<li class="breadcrumb-item">
+								<a href="{{ route('colecciones.index') }}" class="text-white-50 text-decoration-none">
+									<i class="fas fa-collections me-1"></i>
+									@if($isOwner)
+										Mis Colecciones
+									@else
+										Colecciones de {{ $coleccion->user->nombre ?? 'Usuario' }}
+									@endif
+								</a>
+							</li>
+							<li class="breadcrumb-item active text-white" aria-current="page">
+								{{ $coleccion->nombre }}
+							</li>
+						</ol>
+					</nav>
                 </div>
             </div>
 
@@ -202,6 +214,12 @@
                                 <div class="mb-3">
                                     <i class="fas fa-book-open cooking-icon me-3" style="font-size: 2.5rem;"></i>
                                     <h1 class="display-5 fw-bold text-dark d-inline-block mb-0">{{ $coleccion->nombre }}</h1>
+                                    @if(!$isOwner)
+                                        <span class="badge bg-info ms-3">
+                                            <i class="fas fa-eye me-1"></i>
+                                            Solo lectura
+                                        </span>
+                                    @endif
                                 </div>
                                 
                                 @if($coleccion->descripcion)
@@ -217,14 +235,27 @@
                                         <i class="fas fa-calendar me-2 text-info"></i>
                                         <span>Creada {{ $coleccion->created_at->format('d/m/Y') }}</span>
                                     </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-user me-2 text-success"></i>
+                                        <span>{{ $coleccion->user->nombre ?? 'Usuario' }}</span>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
                                 <div class="d-flex flex-column flex-lg-row gap-2 justify-content-lg-end">
-                                    <a href="{{ route('colecciones.edit', $coleccion) }}" class="btn-primary-custom">
-                                        <i class="fas fa-edit me-2"></i>
-                                        Editar
-                                    </a>
+                                    @if($isOwner)
+                                        <!-- Solo el propietario puede editar -->
+                                        <a href="{{ route('colecciones.edit', $coleccion) }}" class="btn-primary-custom">
+                                            <i class="fas fa-edit me-2"></i>
+                                            Editar
+                                        </a>
+                                    @else
+                                        <!-- Información del propietario para visitantes -->
+                                        <div class="owner-info text-center">
+                                            <small class="text-muted d-block">Colección de</small>
+                                            <strong class="text-primary">{{ $coleccion->user->nombre ?? 'Usuario' }}</strong>
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -301,19 +332,21 @@
                                                 </div>
                                             @endif
                                             
-                                            <!-- Botón para quitar -->
-                                            <div class="position-absolute top-0 end-0 p-2">
-                                                <form action="{{ route('colecciones.removeReceta', [$coleccion, $receta]) }}" method="POST" class="d-inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" 
-                                                            onclick="return confirm('¿Quitar esta receta de la colección?')"
-                                                            class="btn-danger-custom"
-                                                            title="Quitar de la colección">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                            <!-- Botón para quitar - SOLO para el propietario -->
+                                            @if($isOwner)
+                                                <div class="position-absolute top-0 end-0 p-2">
+                                                    <form action="{{ route('colecciones.removeReceta', [$coleccion, $receta]) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" 
+                                                                onclick="return confirm('¿Quitar esta receta de la colección?')"
+                                                                class="btn-danger-custom"
+                                                                title="Quitar de la colección">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endif
                                         </div>
                                         
                                         <!-- Contenido -->
@@ -387,18 +420,24 @@
                             </div>
                             <h3 class="fw-bold text-dark mb-3">Colección vacía</h3>
                             <p class="text-dark mb-4">
-                                Esta colección no tiene recetas aún. Puedes agregar recetas visitando cualquier receta 
-                                y usando el botón "Agregar a colección".
+                                @if($isOwner)
+                                    Esta colección no tiene recetas aún. Puedes agregar recetas visitando cualquier receta 
+                                    y usando el botón "Agregar a colección".
+                                @else
+                                    Esta colección no tiene recetas aún.
+                                @endif
                             </p>
                             <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
                                 <a href="{{ route('home') }}" class="btn-primary-custom">
                                     <i class="fas fa-search me-2"></i>
                                     Explorar Recetas
                                 </a>
-                                <a href="{{ route('colecciones.edit', $coleccion) }}" class="btn-secondary-custom">
-                                    <i class="fas fa-edit me-2"></i>
-                                    Editar Colección
-                                </a>
+                                @if($isOwner)
+                                    <a href="{{ route('colecciones.edit', $coleccion) }}" class="btn-secondary-custom">
+                                        <i class="fas fa-edit me-2"></i>
+                                        Editar Colección
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -411,7 +450,11 @@
                     <div class="text-center">
                         <a href="{{ route('colecciones.index') }}" class="btn-secondary-custom">
                             <i class="fas fa-arrow-left me-2"></i>
-                            Volver a Mis Colecciones
+                            @if($isOwner)
+                                Volver a Mis Colecciones
+                            @else
+                                Volver a Colecciones
+                            @endif
                         </a>
                     </div>
                 </div>
