@@ -63,9 +63,11 @@
                         <tbody>
                             @foreach($usuarios as $usuario)
                                 <tr>
-                                    <td class="align-middle">{{ $usuario->nombre }}</td>
-                                    <td class="text-center align-middle">{{ $usuario->recetas_count }}</td>
-                                    <td class="align-middle">{{ $usuario->created_at->format('d/m/Y') }}</td>
+                                    <td class="align-middle">{{ $usuario->nombre ?? 'Sin nombre' }}</td>
+                                    <td class="text-center align-middle">{{ $usuario->recetas_count ?? 0 }}</td>
+                                    <td class="align-middle">
+                                        {{ $usuario->created_at ? $usuario->created_at->format('d/m/Y') : 'Fecha no disponible' }}
+                                    </td>
                                     <td class="text-end">
                                         <a href="{{ route('users.show', $usuario->id) }}" 
                                         class="btn btn-primary btn-sm">
@@ -79,9 +81,25 @@
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $usuarios->links('pagination::simple-bootstrap-4') }}
-                </div>
+               <!-- Paginación-->
+                @if($usuarios->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Navegación de páginas">
+                            <ul class="pagination">
+                                {{-- Números de página --}}
+                                @for ($i = 1; $i <= $usuarios->lastPage(); $i++)
+                                    @if ($i == $usuarios->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $i }}</span></li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $usuarios->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endif
+                                @endfor
+                            </ul>
+                        </nav>
+                    </div>
+                @endif
                 
             @endif
         </div>
