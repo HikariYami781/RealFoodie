@@ -90,9 +90,26 @@
                     @endforeach
                 </div>
 
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $recetas->links('pagination::simple-bootstrap-4') }}
-                </div>
+				<!-- Paginación-->
+                @if($recetas->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Navegación de páginas">
+                            <ul class="pagination">
+                                {{-- Números de página --}}
+                                @for ($i = 1; $i <= $recetas->lastPage(); $i++)
+                                    @if ($i == $recetas->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $i }}</span></li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $recetas->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endif
+                                @endfor
+                            </ul>
+                        </nav>
+                    </div>
+                @endif
+						
             @endif
         @endif
     </div>
