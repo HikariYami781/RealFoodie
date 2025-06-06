@@ -23,7 +23,55 @@
         transform: translateY(-5px);
     }
     
-    /* Modal personalizado */
+    .image-preview-container {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .image-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #dee2e6;
+        transition: all 0.3s ease;
+    }
+    
+    .image-preview:hover {
+        transform: scale(1.05);
+        border-color: #0d6efd;
+    }
+    
+    .image-upload-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .image-preview-container:hover .image-upload-overlay {
+        opacity: 1;
+    }
+    
+    .upload-icon {
+        color: white;
+        font-size: 1.5rem;
+    }
+    
+    .file-input-custom {
+        display: none;
+    }
+    
+
     .custom-modal-overlay {
         position: fixed;
         top: 0;
@@ -153,26 +201,58 @@
                             @enderror
                         </div>
                         
-                        
-                        <div class="mb-4">
-                            <label for="foto_perfil" class="form-label">Foto de Perfil</label>
-                            <input type="file" class="form-control @error('foto_perfil') is-invalid @enderror" id="foto_perfil" name="foto_perfil" accept="image/*">
-                            
-                            @error('foto_perfil')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                            
-                            <div class="form-text mt-1">
-                                Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 10MB.
-                            </div>
-                            
-                            @if(isset($user->foto_perfil) && $user->foto_perfil)
-                                <div class="mt-2">
-                                    <img src="{{ asset('storage/fotos_perfil/' . $user->foto_perfil) }}" 
-                                        alt="Foto de perfil" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
-                                </div>
-                            @endif
-                        </div>
+                        <!-- Sección mejorada de foto de perfil -->
+						<div class="mb-4">
+							<label class="form-label">Foto de Perfil</label>
+
+							<!-- Preview de la imagen -->
+							<div class="text-center mb-3">
+								<div class="image-preview-container" onclick="triggerFileInput()">
+									<img id="imagePreview" 
+										 src="{{ isset($user->foto_perfil) && $user->foto_perfil ? asset('fotos_perfil/' . $user->foto_perfil) : asset('images/x_defecto.jpg') }}" 
+										 alt="Preview de foto de perfil" 
+										 class="image-preview"
+										 onerror="this.src='{{ asset('images/x_defecto.jpg') }}';this.onerror=null;">
+
+									<div class="image-upload-overlay">
+										<i class="fas fa-camera upload-icon"></i>
+									</div>
+								</div>
+
+								<div class="mt-2">
+									<small class="text-muted">Haz clic en la imagen para cambiarla</small>
+								</div>
+							</div>
+
+							<!-- Input de archivo oculto -->
+							<input type="file" 
+								   class="file-input-custom @error('foto_perfil') is-invalid @enderror" 
+								   id="foto_perfil" 
+								   name="foto_perfil" 
+								   accept="image/*"
+								   onchange="previewImage(this)">
+
+							<!-- Botones de acción -->
+							<div class="text-center">
+								<button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="triggerFileInput()">
+									<i class="fas fa-upload me-1"></i>Seleccionar imagen
+								</button>
+
+								@if(isset($user->foto_perfil) && $user->foto_perfil)
+									<button type="button" class="btn btn-outline-danger btn-sm" onclick="removeImage()">
+										<i class="fas fa-trash me-1"></i>Eliminar imagen
+									</button>
+								@endif
+							</div>
+
+							@error('foto_perfil')
+								<div class="invalid-feedback d-block text-center mt-2">{{ $message }}</div>
+							@enderror
+
+							<div class="form-text text-center mt-2">
+								Formatos aceptados: JPG, PNG, GIF. Tamaño máximo: 10MB.
+							</div>
+						</div>
                         
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save me-1"></i>Guardar
@@ -319,7 +399,61 @@ const passwordInput = document.getElementById('delete-password');
 const passwordError = document.getElementById('password-error');
 const confirmBtn = document.getElementById('confirm-delete-btn');
 
-// Funciones del modal
+// Variables para el preview de imagen
+const imagePreview = document.getElementById('imagePreview');
+const fileInput = document.getElementById('foto_perfil');
+const defaultImageUrl = "{{ asset('images/x_defecto.jpg') }}";
+let originalImageSrc = imagePreview.src;
+
+// Funciones para el manejo de imágenes
+function triggerFileInput() {
+    fileInput.click();
+}
+
+function previewImage(input) {
+    const file = input.files[0];
+    
+    if (file) {
+        // Validar tipo de archivo
+        const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+        if (!validTypes.includes(file.type)) {
+            alert('Por favor, selecciona un archivo de imagen válido (JPG, PNG, GIF).');
+            input.value = '';
+            return;
+        }
+        
+        // Validar tamaño (10MB)
+        const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+        if (file.size > maxSize) {
+            alert('El archivo es demasiado grande. El tamaño máximo es 10MB.');
+            input.value = '';
+            return;
+        }
+        
+        // Mostrar preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            console.log('Preview actualizado con nueva imagen');
+        };
+        reader.onerror = function() {
+            console.error('Error al leer el archivo');
+            alert('Error al procesar la imagen. Inténtalo de nuevo.');
+            imagePreview.src = defaultImageUrl;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function removeImage() {
+    if (confirm('¿Estás seguro de que quieres eliminar la imagen de perfil?')) {
+        imagePreview.src = defaultImageUrl;
+        fileInput.value = '';
+        console.log('Imagen eliminada del preview');
+    }
+}
+
+// Funciones del modal de eliminación
 function openDeleteModal() {
     deleteModal.classList.add('show');
     document.body.style.overflow = 'hidden';
@@ -331,7 +465,6 @@ function openDeleteModal() {
 }
 
 function closeDeleteModal(event) {
-    // Si se hace clic en el overlay pero no en el modal interno, cerrar
     if (event && event.target !== deleteModal) {
         return;
     }
@@ -339,13 +472,11 @@ function closeDeleteModal(event) {
     deleteModal.classList.remove('show');
     document.body.style.overflow = '';
     
-    // Limpiar formulario
     passwordInput.value = '';
     passwordInput.classList.remove('is-invalid');
     passwordError.style.display = 'none';
     passwordError.textContent = '';
     
-    // Restaurar botón
     confirmBtn.disabled = false;
     confirmBtn.innerHTML = '<i class="fas fa-trash-alt me-1"></i>Eliminar Cuenta Permanentemente';
 }
@@ -374,17 +505,26 @@ function submitDeleteForm() {
     hidePasswordError();
     
     if (confirm('¿Estás completamente seguro? Esta acción NO se puede deshacer.')) {
-        // Deshabilitar botón y mostrar estado de carga
         confirmBtn.disabled = true;
         confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Eliminando...';
         
-        // Enviar formulario
         document.getElementById('delete-account-form').submit();
     }
 }
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado - Inicializando funciones de imagen');
+    
+    // Guardar la imagen original para referencia
+    originalImageSrc = imagePreview.src;
+    
+    // Event listener para el input de archivo
+    fileInput.addEventListener('change', function(e) {
+        console.log('Archivo seleccionado:', e.target.files[0]);
+        previewImage(this);
+    });
+    
     // Cerrar modal con Escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && deleteModal.classList.contains('show')) {
@@ -418,10 +558,21 @@ document.addEventListener('DOMContentLoaded', function() {
     @endif
 });
 
-// Prevenir el scroll del body cuando el modal esté abierto
-deleteModal.addEventListener('wheel', function(e) {
-    e.stopPropagation();
+    // Prevenir el scroll del body cuando el modal esté abierto
+    deleteModal.addEventListener('wheel', function(e) {
+        e.stopPropagation();
+    });
+    
+    // Manejo de errores de carga de imagen 
+    imagePreview.addEventListener('error', function() {
+        console.log('Error cargando imagen, usando imagen por defecto');
+        this.src = defaultImageUrl;
+        this.onerror = null; // Evitar bucle infinito
+    });
+    
+    // Agregar evento load para verificar que la imagen se carga correctamente
+    imagePreview.addEventListener('load', function() {
+        console.log('Imagen cargada correctamente:', this.src);
 });
 </script>
-
 @endsection
