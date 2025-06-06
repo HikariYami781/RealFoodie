@@ -34,39 +34,70 @@
             </a>
         </div>
 
+        @if($errors->any())
+            <div class="alert alert-danger">
+                @foreach($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
         <form action="{{ route('consultas.recetas-fecha') }}" method="GET" class="mb-4">
-
             <div class="row">
-
                 <div class="col-md-5">
                     <div class="form-group">
                         <label for="fecha_inicio">Fecha Inicio:</label>
-                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ request('fecha_inicio') }}" required>
+                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" 
+                               value="{{ request('fecha_inicio') }}" required>
                     </div>
                 </div>
 
                 <div class="col-md-5">
                     <div class="form-group">
                         <label for="fecha_fin">Fecha Fin:</label>
-                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ request('fecha_fin') }}" required>
+                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" 
+                               value="{{ request('fecha_fin') }}" required>
                     </div>
                 </div>
 
                 <div class="col-md-2 d-flex align-items-end">
                     <button type="submit" class="btn btn-primary w-100">Buscar</button>
                 </div>
-
             </div>
         </form>
 
+        @if(isset($debug))
+            <div class="alert alert-warning">
+                <h5>Información de Debug:</h5>
+                <ul>
+                    <li><strong>Rango buscado:</strong> {{ $debug['fecha_inicio'] }} a {{ $debug['fecha_fin'] }}</li>
+                    <li><strong>Total con whereBetween:</strong> {{ $debug['total_recetas_whereBetween'] }}</li>
+                    <li><strong>Total con whereDate:</strong> {{ $debug['total_recetas_whereDate'] }}</li>
+                    <li><strong>Fecha más antigua en BD:</strong> {{ $debug['min_fecha_bd'] }}</li>
+                    <li><strong>Fecha más reciente en BD:</strong> {{ $debug['max_fecha_bd'] }}</li>
+                    <li><strong>Total recetas en BD:</strong> {{ $debug['total_recetas_bd'] }}</li>
+                </ul>
+            </div>
+        @endif
+
         @if(isset($recetas))
+            <!-- Información de resultados -->
+            <div class="alert alert-info">
+                <strong>Resultados:</strong> 
+                Se encontraron {{ $recetas->total() }} receta(s) 
+                @if(request('fecha_inicio') && request('fecha_fin'))
+                    entre {{ \Carbon\Carbon::parse(request('fecha_inicio'))->format('d/m/Y') }} 
+                    y {{ \Carbon\Carbon::parse(request('fecha_fin'))->format('d/m/Y') }}
+                @endif
+                <br>
+                <small>Mostrando página {{ $recetas->currentPage() }} de {{ $recetas->lastPage() }}</small>
+            </div>
 
             @if($recetas->isEmpty())
-                <div class="alert alert-info">
+                <div class="alert alert-warning">
                     No se encontraron recetas en el rango de fechas especificado.
                 </div>
             @else
-
                 <div class="row">
                     @foreach($recetas as $receta)
                         <div class="col-md-6 mb-4">
@@ -78,7 +109,7 @@
                                     </h6>
                                     <p class="card-text">
                                         <small class="text-muted">
-                                            Creada el: {{ $receta->created_at->format('d/m/Y') }}
+                                            Creada el: {{ $receta->created_at->format('d/m/Y H:i') }}
                                         </small>
                                     </p>
                                     <a href="{{ route('recetas.show', $receta) }}" class="btn btn-primary">
@@ -90,10 +121,25 @@
                     @endforeach
                 </div>
 
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $recetas->links('pagination::simple-bootstrap-4') }}
-                </div>
-                
+                <!-- Paginación-->
+                @if($recetas->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Navegación de páginas">
+                            <ul class="pagination">
+                                {{-- Números de página --}}
+                                @for ($i = 1; $i <= $recetas->lastPage(); $i++)
+                                    @if ($i == $recetas->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $i }}</span></li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $recetas->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endif
+                                @endfor
+                            </ul>
+                        </nav>
+                    </div>
+                @endif
             @endif
         @endif
     </div>
