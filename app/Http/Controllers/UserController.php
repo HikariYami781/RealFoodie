@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -8,30 +7,26 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+        
     /**
      * Display a user's public profile.
      */
     public function show(User $user)
     {
-        // Cargamos las relaciones básicas
         $user->load(['recetas.categoria', 'recetas.valoraciones', 'recetas.user']);
-        
-        // Cargamos la relación recetasFavoritas con sus relaciones
         $user->load(['recetasFavoritas.categoria', 'recetasFavoritas.valoraciones', 'recetasFavoritas.user']);
-        
-        // Cargamos las colecciones
         $user->load('colecciones');
         
         // Filtramos solo las recetas públicas del usuario para mostrar
         $recetas = $user->recetas()->where('publica', true)->paginate(9);
-        
-        // También podemos paginar las favoritas si hay muchas
         $favoritas = $user->recetasFavoritas()->paginate(9);
+        $user->profile_image_url = $this->getProfileImage($user);
         
         return view('profile.show', compact('user', 'recetas', 'favoritas'));
     }
+
     
-    /**
+	 /**
      * Toggle follow/unfollow a user.
      */
     public function toggleFollow(User $user)
@@ -53,40 +48,53 @@ class UserController extends Controller
         return back()->with('success', $message);
     }
     
+    
     /**
      * Display a user's followers.
      */
     public function followers(User $user)
     {
-        // Cargamos los seguidores con sus relaciones necesarias para mostrar estadísticas
+        // Cargamos los seguidores 
         $seguidores = $user->seguidores()
             ->withCount(['recetas', 'seguidores'])
             ->paginate(20);
         
-        // Cargamos las relaciones del usuario principal
+        $seguidores->getCollection()->transform(function ($seguidor) {
+            $seguidor->profile_image_url = $this->getProfileImage($seguidor);
+            return $seguidor;
+        });
+        
         $user->loadCount(['seguidores', 'siguiendo']);
+        $user->profile_image_url = $this->getProfileImage($user);
         
         return view('seguidores.seguir', compact('user', 'seguidores'));
     }
+    
     
     /**
      * Display who a user is following.
      */
     public function following(User $user)
     {
-        // Cargamos a quién sigue con sus relaciones necesarias para mostrar estadísticas
+
         $siguiendo = $user->siguiendo()
             ->withCount(['recetas', 'seguidores'])
             ->paginate(20);
         
-        // Cargamos las relaciones del usuario principal
+        $siguiendo->getCollection()->transform(function ($seguido) {
+            $seguido->profile_image_url = $this->getProfileImage($seguido);
+            return $seguido;
+        });
+
         $user->loadCount(['seguidores', 'siguiendo']);
+        $user->profile_image_url = $this->getProfileImage($user);
         
         return view('seguidores.siguiendo', compact('user', 'siguiendo'));
     }
     
+    
     /**
-     * Search users (opcional - para descubrir nuevos usuarios)
+     * Search users
      */
     public function index(Request $request)
     {
@@ -101,5 +109,25 @@ class UserController extends Controller
             ->paginate(12);
         
         return view('users.index', compact('usuarios'));
+    }
+    
+	
+	/**
+     * Helper method para obtener la imagen de perfil o la por defecto
+     */
+    private function getProfileImage($user)
+    {
+        if ($user->foto_perfil && file_exists(storage_path('app/public/fotos_perfil/' . $user->foto_perfil))) {
+            return asset('storage/fotos_perfil/' . $user->foto_perfil);
+        }
+        
+        // Verifica que la imagen por defecto existe
+        $defaultImage = public_path('images/x_defecto.jpg');
+        if (file_exists($defaultImage)) {
+            return asset('images/x_defecto.jpg');
+        }
+        
+        // Fallback a una imagen en línea si no existe localmente
+        return 'https://via.placeholder.com/80x80/cccccc/666666?text=Usuario';
     }
 }
