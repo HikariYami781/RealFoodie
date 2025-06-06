@@ -39,6 +39,7 @@ class ProfileController extends Controller
         
         return view('profile.show', compact('user', 'recetas', 'favoritas'));
     }
+    
 
     /**
      * Display the user's profile form.
@@ -49,6 +50,7 @@ class ProfileController extends Controller
             'user' => $request->user(),
         ]);
     }
+    
 
     /**
      * Update the user's profile information.
@@ -61,54 +63,93 @@ class ProfileController extends Controller
             'nombre' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'descripcion' => 'nullable|string',
-            'foto_perfil' => 'nullable|image|max:10240',
+            'fotos_perfil' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
         
         try {
-            //Actualizar el usuario
             $dataToUpdate = [
                 'nombre' => $validatedData['nombre'],
                 'email' => $validatedData['email'],
                 'descripcion' => $validatedData['descripcion'] ?? $user->descripcion,
             ];
             
-            // Verificar si hay archivo y es válido
-            if ($request->hasFile('foto_perfil') && $request->file('foto_perfil')->isValid()) {
-                // Eliminar foto anterior si existe
-                if ($user->foto_perfil) {
-                    Storage::disk('public')->delete('fotos_perfil/' . $user->foto_perfil);
+            if ($request->hasFile('foto_perfil')) {
+                $file = $request->file('foto_perfil');
+                
+                Log::info('Procesando archivo: ' . $file->getClientOriginalName());
+
+                if ($file->isValid()) {te
+                    $publicDir = public_path('fotos_perfil');
+                    if (!file_exists($publicDir)) {
+                        mkdir($publicDir, 0755, true);
+                        Log::info('Directorio creado: ' . $publicDir);
+                    }
+
+                    if ($user->foto_perfil) {
+                        $oldFilePath = public_path('fotos_perfil/' . $user->foto_perfil);
+                        if (file_exists($oldFilePath)) {
+                            unlink($oldFilePath);
+                            Log::info('Foto anterior eliminada: ' . $oldFilePath);
+                        }
+                    }
+                    
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = 'perfil_' . $user->id . '_' . time() . '.' . $extension;
+                    
+                    $destinationPath = public_path('fotos_perfil');
+                    $moved = $file->move($destinationPath, $filename);
+                    
+                    if ($moved) {
+                        $fullPath = public_path('fotos_perfil/' . $filename);
+                        if (file_exists($fullPath)) {
+                            chmod($fullPath, 0644);
+                            $dataToUpdate['foto_perfil'] = $filename;
+                            Log::info('Archivo guardado exitosamente: ' . $fullPath);
+                        } else {
+                            throw new \Exception('El archivo no se encontró después de moverlo');
+                        }
+                    } else {
+                        throw new \Exception('No se pudo mover el archivo');
+                    }
+                } else {
+                    throw new \Exception('El archivo no es válido');
                 }
-                
-                // Generar un nombre único para el archivo
-                $filename = time() . '_' . $request->file('foto_perfil')->getClientOriginalName();
-                
-                // Almacenar el archivo
-                $request->file('foto_perfil')->storeAs('fotos_perfil', $filename, 'public');
-                
-                // Actualizar el nombre en la base de datos
-                $dataToUpdate['foto_perfil'] = $filename;
-                
-                Log::info('Archivo subido correctamente: ' . $filename);
             }
             
-            // Verificar si el email ha cambiado
             if ($user->email !== $validatedData['email']) {
                 $dataToUpdate['email_verified_at'] = null;
             }
             
-            // Actualizar el usuario
-            $user->update($dataToUpdate);
+            $updated = $user->update($dataToUpdate);
             
-            return Redirect::route('profile.edit')->with('status', 'profile-updated');
+            if ($updated) {
+                Log::info('Usuario actualizado correctamente. ID: ' . $user->id);
+                
+                $user->refresh();
+                Log::info('Foto de perfil en BD después de actualizar: ' . ($user->foto_perfil ?? 'null'));
+                
+                return Redirect::route('profile.edit')->with('status', 'profile-updated');
+            } else {
+                throw new \Exception('No se pudo actualizar el usuario en la base de datos');
+            }
+            
         } catch (\Exception $e) {
-            // Registrar el error para depuración
-            Log::error('Error al actualizar el perfil: ' . $e->getMessage());
+            Log::error('Error en update de perfil: ' . $e->getMessage());
+            
+            if (isset($filename)) {
+                $errorPath = public_path('fotos_perfil/' . $filename);
+                if (file_exists($errorPath)) {
+                    unlink($errorPath);
+                    Log::info('Archivo de error eliminado: ' . $errorPath);
+                }
+            }
             
             return Redirect::route('profile.edit')->withErrors([
-                'foto_perfil' => 'Hubo un problema al subir la imagen: ' . $e->getMessage()
+                'foto_perfil' => 'Error al procesar la imagen: ' . $e->getMessage()
             ]);
         }
     }
+    
 
     /**
      * Update the user's password.
@@ -132,20 +173,19 @@ class ProfileController extends Controller
         return redirect()->route('profile.edit')
                         ->with('success', 'Contraseña actualizada correctamente.');
     }
+    
 
     /**
      * Delete the user's account.
      */
     public function destroy(Request $request): RedirectResponse
     {
-        // Validar la contraseña
         $request->validate([
             'password' => ['required', 'string'],
         ]);
 
         $user = $request->user();
         
-        // Verificar que la contraseña sea correcta
         if (!Hash::check($request->password, $user->password)) {
             return Redirect::route('profile.edit')
                 ->withErrors(['delete_password' => 'La contraseña no es correcta.'])
@@ -153,9 +193,11 @@ class ProfileController extends Controller
         }
 
         try {
-            // Eliminar foto de perfil si existe
             if ($user->foto_perfil) {
-                Storage::disk('public')->delete('fotos_perfil/' . $user->foto_perfil);
+                $photoPath = public_path('fotos_perfil/' . $user->foto_perfil);
+                if (file_exists($photoPath)) {
+                    unlink($photoPath);
+                }
             }
             
             Auth::logout();
