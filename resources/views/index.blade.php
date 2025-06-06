@@ -65,18 +65,18 @@
                     <div class="card h-100">
                         <!-- Solo la imagen -->
                         @if($receta->imagen)
-                            <div class="text-center p-2">
-                                <img src="{{ asset('storage/' . $receta->imagen) }}" 
-                                    alt="{{ $receta->titulo }}" 
-                                    class="img-fluid rounded" 
-                                    style="max-height: 200px; width: 100%; object-fit: cover;">
-                            </div>
-                        @else
-                            <!-- Placeholder si no hay imagen -->
-                            <div class="text-center p-2 bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
-                                <span class="text-muted">Sin imagen</span>
-                            </div>
-                        @endif
+							<div class="text-center p-2">
+								<img src="{{ file_exists(public_path($receta->imagen)) ? asset($receta->imagen) : asset('storage/' . $receta->imagen) }}" 
+									alt="{{ $receta->titulo }}" 
+									class="img-fluid rounded" 
+									style="max-height: 200px; width: 100%; object-fit: cover;"
+									onerror="this.src='{{ asset('/images/no-image-placeholder.jpg') }}'">
+							</div>
+						@else
+							<div class="text-center p-2 bg-light" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+								<span class="text-muted">Sin imagen</span>
+							</div>
+						@endif
                         
                         <!-- Solo el título -->
                         <div class="card-body text-center">
@@ -105,7 +105,7 @@
                                         </a>
                                     @endauth
                                         
-                                    <!-- Botón para añadir a colección (Muestra modal) -->
+                                    <!-- Botón para añadir a colección -->
                                     @auth
                                         @php
                                             $enColeccion = false;
@@ -171,7 +171,7 @@
                                                 </button>
                                             </div>
                                             
-                                            <!-- Formulario para crear colección (inicialmente oculto) -->
+                                            <!-- Formulario para crear colección -->
                                             <div id="formCrearColeccion{{ $receta->id }}" style="display: none;">
                                                 <div class="card border-primary">
                                                     <div class="card-body p-3">
@@ -307,7 +307,6 @@
         form.method = 'POST';
         form.action = '/colecciones';
         
-        // CSRF token
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';
         csrfToken.name = '_token';
@@ -363,7 +362,6 @@
             form.appendChild(methodField);
         }
         
-        // CSRF token
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';
         csrfToken.name = '_token';
@@ -383,7 +381,7 @@
         form.submit();
     }
 
-    // Función legacy mantenida por compatibilidad
+    
     function addToCollection(recetaId) {
         const coleccionId = document.getElementById('coleccion_select' + recetaId).value;
         if (!coleccionId) {
