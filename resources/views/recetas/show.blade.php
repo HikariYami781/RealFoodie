@@ -194,6 +194,38 @@
             position: relative;
             z-index: 2;
         }
+		
+		/* Responsive*/
+        @media (max-width: 768px) {
+            .card {
+                padding: 15px;
+            }
+            
+            .author-card .d-flex {
+                flex-direction: column;
+                align-items: center !important;
+                text-align: center;
+            }
+            
+            .author-card .me-3 {
+                margin-right: 0 !important;
+                margin-bottom: 15px;
+            }
+            
+            .author-card .ms-3 {
+                margin-left: 0 !important;
+                margin-top: 15px;
+            }
+            
+            .comment-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .comment-rating {
+                align-self: flex-end;
+            }
     </style>
 </head>
 <body>
@@ -220,37 +252,39 @@
                             
 
                             <!-- Imagen-->
-                            @if($receta->imagen)
-                                <div class="ms-3">
-                                    <img src="{{ asset('storage/' . $receta->imagen) }}" 
-                                        alt="{{ $receta->titulo }}" 
-                                        class="img-fluid rounded" 
-                                        style="max-width: 300px; max-height: 200px;">
-                                </div>
-                            @endif
+                           @if($receta->imagen)
+								<div class="ms-3">
+									<img src="{{ file_exists(public_path($receta->imagen)) ? asset($receta->imagen) : asset('storage/' . 												  $receta->imagen) }}" 
+											 alt="{{ $receta->titulo }}" 
+											 class="img-fluid rounded" 
+											 style="max-height: 200px; width: 100%; object-fit: cover;" 
+											 onerror="this.src='{{ asset('/images/no-image-placeholder.jpg') }}'">
+								</div>
+							@endif
 
                         </div>
 
-             <!--Autor-->           
-            <div class="mb-4">
-                <h5 class="mb-3">
-                    <i class="fas fa-chef-hat me-2"></i>Creado por
-                </h5>
-                <div class="author-card p-3 bg-light rounded-3 border">
-                    <div class="d-flex align-items-center">
+                     <!--Autor-->           
+                    <div class="mb-4">
+                        <h5 class="mb-3">
+                            <i class="fas fa-chef-hat me-2"></i>Creado por
+                        </h5>
+                        <div class="author-card p-3 bg-light rounded-3 border">
+                            <div class="d-flex align-items-center">
                         <!-- Foto de perfil del autor -->
                         <div class="me-3">
-                            @if($receta->user->foto_perfil)
-                                <img src="{{ asset('storage/fotos_perfil/' . $receta->user->foto_perfil) }}" 
-                                    class="rounded-circle author-avatar" 
-                                    alt="Foto de perfil de {{ $receta->user->nombre }}"
-                                    style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            @else
-                                <img src="{{ asset('images/x_defecto.jpg') }}" 
-                                    class="rounded-circle author-avatar"
-                                    alt="Foto de perfil por defecto"
-                                    style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            @endif
+						  @if($receta->user->foto_perfil)
+							<img src="{{ isset($receta->user->foto_perfil) && $receta->user->foto_perfil ? asset('fotos_perfil/' . $receta->user->foto_perfil) : asset('images/x_defecto.jpg') }}" 
+									 class="rounded-circle author-avatar" 
+									 alt="Foto de perfil de {{ $receta->user->nombre }}"
+									 style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+									 onerror="this.src='{{ asset('images/x_defecto.jpg') }}';this.onerror=null;">
+						@else
+							<div class="rounded-circle author-avatar d-flex align-items-center justify-content-center"
+								 style="width: 60px; height: 60px; background-color: #6c757d; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+								<i class="fas fa-user text-white"></i>
+							</div>
+						@endif
                         </div>
 
                     
@@ -337,25 +371,15 @@
                                 <div class="mb-3">
                                     <h5>Dificultad</h5>
                                     <p>
-                                        @switch($receta->dificultad)
-                                            @case(1)
-                                                Muy fácil
-                                                @break
-                                            @case(2)
-                                                Fácil
-                                                @break
-                                            @case(3)
-                                                Media
-                                                @break
-                                            @case(4)
-                                                Difícil
-                                                @break
-                                            @case(5)
-                                                Muy difícil
-                                                @break
-                                            @default
-                                                No especificada
-                                        @endswitch
+                                        @if($receta->dificultad == 'Fácil')
+                                            Fácil
+                                        @elseif($receta->dificultad == 'Media')
+                                            Media
+                                        @elseif($receta->dificultad == 'Difícil')
+                                            Difícil
+                                        @else
+                                            {{ $receta->dificultad ?? 'No especificada' }}
+                                        @endif
                                     </p>
                                 </div>
                             </div>
@@ -466,52 +490,62 @@
                         @auth
                             <div class="user-rating-form">
                                 <h5 class="mb-3">Comparte tu experiencia</h5>
-                                <form action="{{ route('comentarios.storeWithRating', $receta) }}" method="POST" id="rating-comment-form">
-                                    @csrf
-                                    
-                                    <!-- Valoración con estrellas -->
-                                    <div class="mb-4">
-                                        <label class="form-label fw-bold">Tu valoración (opcional):</label>
-                                        <div class="rating-stars" id="user-rating">
-                                            <i class="far fa-star" data-rating="1"></i>
-                                            <i class="far fa-star" data-rating="2"></i>
-                                            <i class="far fa-star" data-rating="3"></i>
-                                            <i class="far fa-star" data-rating="4"></i>
-                                            <i class="far fa-star" data-rating="5"></i>
-                                        </div>
-                                        <input type="hidden" name="puntuacion" id="puntuacion-input" value="">
-                                        <small class="text-muted">Haz clic en las estrellas para valorar (opcional)</small>
-                                        @if($valoracionUsuario)
-                                            <div class="mt-2">
-                                                <small class="text-info">
-                                                    <i class="fas fa-info-circle"></i> 
-                                                    Ya has valorado esta receta con {{ $valoracionUsuario->puntuacion }} estrella{{ $valoracionUsuario->puntuacion != 1 ? 's' : '' }}. 
-                                                    Si valoras nuevamente, se actualizará tu valoración anterior.
-                                                </small>
-                                            </div>
-                                        @endif
+        
+                                <!-- Verificar si ya comentó/valoró -->
+                                @php
+                                    $yaComento = $receta->comentarios()->where('user_id', Auth::id())->exists();
+                                    $yaValoro = $receta->valoraciones()->where('user_id', Auth::id())->exists();
+                                @endphp
+                                
+                                @if($yaComento || $yaValoro)
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Ya has valorado y comentado esta receta. ¡Gracias por tu participación!
                                     </div>
-                                    
-                                    <!-- Comentario -->
-                                    <div class="mb-3">
-                                        <label for="contenido" class="form-label fw-bold">Tu comentario:</label>
-                                        <textarea name="contenido" id="contenido" rows="4" class="form-control @error('contenido') is-invalid @enderror" 
-                                                  placeholder="Comparte tu experiencia con esta receta..." required>{{ old('contenido') }}</textarea>
-                                        @error('contenido')
-                                            <span class="invalid-feedback">{{ $message }}</span>
-                                        @enderror
-                                    </div>
-                                    
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-paper-plane me-2"></i>Publicar Comentario
+                                @else
+                            <form action="{{ route('comentarios.storeWithRating', $receta) }}" method="POST" id="rating-comment-form">
+                        @csrf
+                
+                <!-- Valoración con estrellas (OBLIGATORIA) -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Tu valoración <span class="text-danger">*</span>:</label>
+                            <div class="rating-stars" id="user-rating">
+                                <i class="far fa-star" data-rating="1"></i>
+                                <i class="far fa-star" data-rating="2"></i>
+                                <i class="far fa-star" data-rating="3"></i>
+                                <i class="far fa-star" data-rating="4"></i>
+                                <i class="far fa-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" name="puntuacion" id="puntuacion-input" value="" required>
+                            <small class="text-muted">Haz clic en las estrellas para valorar (obligatorio)</small>
+                            @error('puntuacion')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                
+                <!-- Comentario-->
+                        <div class="mb-3">
+                            <label for="contenido" class="form-label fw-bold">Tu comentario <span class="text-danger">*</span>:</label>
+                            <textarea name="contenido" id="contenido" rows="4" 
+                                      class="form-control @error('contenido') is-invalid @enderror" 
+                                      placeholder="Comparte tu experiencia con esta receta..." required>{{ old('contenido') }}</textarea>
+                            @error('contenido')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        
+                                    <button type="submit" class="btn btn-primary" id="submit-button" disabled>
+                                        <i class="fas fa-paper-plane me-2"></i>Publicar Comentario y Valoración
                                     </button>
+                                    <small class="text-muted d-block mt-2">* Ambos campos son obligatorios</small>
                                 </form>
-                            </div>
-                        @else
-                            <div class="alert alert-info">
-                                <a href="{{ route('login') }}">Inicia sesión</a> para dejar un comentario y valoración.
-                            </div>
-                        @endauth
+                            @endif
+                        </div>
+                    @else
+                        <div class="alert alert-info">
+                            <a href="{{ route('login') }}">Inicia sesión</a> para dejar un comentario y valoración.
+                        </div>
+                    @endauth
                         
 
                         <!-- Lista comentarios -->
@@ -524,7 +558,6 @@
                                             <small class="text-muted d-block">{{ $comentario->fecha->format('d/m/Y H:i') }}</small>
                                         </div>
                                         
-                                        <!-- Mostrar valoración del usuario si existe -->
                                         @php
                                             $valoracionComentario = $receta->valoraciones->where('user_id', $comentario->user_id)->first();
                                         @endphp
@@ -614,35 +647,51 @@
         }
     }
 
-    // Sistema de valoración con estrellas
+    // Sistema de valoración obligatoria con comentario
     document.addEventListener('DOMContentLoaded', function() {
         const ratingStars = document.querySelectorAll('#user-rating .fa-star');
         const puntuacionInput = document.getElementById('puntuacion-input');
+        const contenidoTextarea = document.getElementById('contenido');
+        const submitButton = document.getElementById('submit-button');
         let selectedRating = 0;
         
-        // Cargar valoración existente del usuario si existe
-        @if($valoracionUsuario)
-            selectedRating = {{ $valoracionUsuario->puntuacion }};
-            highlightStars(selectedRating);
-            puntuacionInput.value = selectedRating;
-        @endif
+        // Función para validar formulario
+        function validateForm() {
+            const hasRating = selectedRating > 0;
+            const hasComment = contenidoTextarea && contenidoTextarea.value.trim().length > 0;
+            
+            if (submitButton) {
+                submitButton.disabled = !(hasRating && hasComment);
+            }
+        }
         
-        ratingStars.forEach(star => {
-            star.addEventListener('mouseenter', function() {
-                const rating = parseInt(this.getAttribute('data-rating'));
-                highlightStars(rating);
+        // Eventos para las estrellas
+        if (ratingStars.length > 0) {
+            ratingStars.forEach(star => {
+                star.addEventListener('mouseenter', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    highlightStars(rating);
+                });
+                
+                star.addEventListener('mouseleave', function() {
+                    highlightStars(selectedRating);
+                });
+                
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.getAttribute('data-rating'));
+                    highlightStars(selectedRating);
+                    if (puntuacionInput) {
+                        puntuacionInput.value = selectedRating;
+                    }
+                    validateForm();
+                });
             });
-            
-            star.addEventListener('mouseleave', function() {
-                highlightStars(selectedRating);
-            });
-            
-            star.addEventListener('click', function() {
-                selectedRating = parseInt(this.getAttribute('data-rating'));
-                highlightStars(selectedRating);
-                puntuacionInput.value = selectedRating;
-            });
-        })
+        }
+        
+        // Evento para el textarea
+        if (contenidoTextarea) {
+            contenidoTextarea.addEventListener('input', validateForm);
+        }
         
         function highlightStars(rating) {
             ratingStars.forEach((star, index) => {
@@ -655,25 +704,25 @@
                 }
             });
         }
+        
+        // Validación inicial
+        validateForm();
     });
 
     // Hacer clickeable toda la tarjeta del autor
-document.addEventListener('DOMContentLoaded', function() {
-    const authorCard = document.querySelector('.author-card');
-    if (authorCard) {
-        authorCard.addEventListener('click', function(e) {
-            // Solo redirigir si no se clickeó el botón de seguir
-            if (!e.target.closest('.follow-author-btn')) {
-                const authorLink = this.querySelector('.author-link');
-                if (authorLink) {
-                    window.location.href = authorLink.href;
+    document.addEventListener('DOMContentLoaded', function() {
+        const authorCard = document.querySelector('.author-card');
+        if (authorCard) {
+            authorCard.addEventListener('click', function(e) {
+                if (!e.target.closest('.follow-author-btn')) {
+                    const authorLink = this.querySelector('.author-link');
+                    if (authorLink) {
+                        window.location.href = authorLink.href;
+                    }
                 }
-            }
-        });
-    }
-});
-
-
+            });
+        }
+    });
 </script>
 
 </html>
