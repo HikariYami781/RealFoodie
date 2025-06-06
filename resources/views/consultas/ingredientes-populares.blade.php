@@ -71,9 +71,25 @@
                 </table>
             </div>
 
-            <div class="d-flex justify-content-center mt-4">
-                {{ $ingredientes->links('pagination::simple-bootstrap-4') }}
-            </div>
+           <!-- Paginación -->
+                @if($ingredientes->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Navegación de páginas">
+                            <ul class="pagination">
+                                {{-- Números de página --}}
+                                @for ($i = 1; $i <= $ingredientes->lastPage(); $i++)
+                                    @if ($i == $ingredientes->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $i }}</span></li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $ingredientes->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endif
+                                @endfor
+                            </ul>
+                        </nav>
+                    </div>
+                @endif
         @endif
         
     </div>
