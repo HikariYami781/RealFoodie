@@ -38,7 +38,6 @@
             <div class="row">
                 <div class="col-md-10">
                     <div class="form-group">
-
                         <label for="ingredientes">Ingredientes (separados por coma):</label>
                         <input type="text" class="form-control" id="ingredientes" name="ingredientes" 
                                placeholder="Ej: tomate, cebolla, ajo" value="{{ request('ingredientes') }}" required>
@@ -51,12 +50,21 @@
         </form>
 
         @if(isset($recetas))
-            @if($recetas->isEmpty())
+            <!-- Información de resultados -->
+            <div class="alert alert-info">
+                <strong>Resultados:</strong> 
+                Se encontraron {{ $recetas->total() }} receta(s) 
+                @if(request('ingredientes'))
+                    que contienen: {{ request('ingredientes') }}
+                @endif
+                <br>
+                <small>Mostrando página {{ $recetas->currentPage() }} de {{ $recetas->lastPage() }}</small>
+            </div>
 
-                <div class="alert alert-info">
+            @if($recetas->isEmpty())
+                <div class="alert alert-warning">
                     No se encontraron recetas que contengan todos los ingredientes especificados.
                 </div>
-
             @else
                 <div class="row">
                     @foreach($recetas as $receta)
@@ -66,7 +74,7 @@
                                     <h5 class="card-title">{{ $receta->titulo }}</h5>
 
                                     <h6 class="card-subtitle mb-2 text-muted">
-                                        Por: {{ $receta->user->nombre }}
+                                        Por: {{ $receta->user->nombre ?? 'Usuario no disponible' }}
                                     </h6>
 
                                     <p class="card-text">
@@ -78,23 +86,42 @@
 
                                     <p class="card-text">
                                         <small class="text-muted">
-                                            Creada el: {{ $receta->created_at->format('d/m/Y') }}
+                                            Creada el: 
+                                            @if($receta->created_at)
+                                                {{ $receta->created_at->format('d/m/Y H:i') }}
+                                            @else
+                                                Fecha no disponible
+                                            @endif
                                         </small>
                                     </p>
 
                                     <a href="{{ route('recetas.show', $receta) }}" class="btn btn-primary">
                                         Ver Receta
                                     </a>
-                                    
                                 </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
-
-                <div class="d-flex justify-content-center mt-4">
-                    {{ $recetas->links('pagination::simple-bootstrap-4') }}
-                </div>
+				<!-- Paginación-->
+                @if($recetas->hasPages())
+                    <div class="d-flex justify-content-center mt-4">
+                        <nav aria-label="Navegación de páginas">
+                            <ul class="pagination">
+                                {{-- Números de página --}}
+                                @for ($i = 1; $i <= $recetas->lastPage(); $i++)
+                                    @if ($i == $recetas->currentPage())
+                                        <li class="page-item active"><span class="page-link">{{ $i }}</span></li>
+                                    @else
+                                        <li class="page-item">
+                                            <a class="page-link" href="{{ $recetas->url($i) }}">{{ $i }}</a>
+                                        </li>
+                                    @endif
+                                @endfor
+                            </ul>
+                        </nav>
+                    </div>
+                @endif
             @endif
         @endif
     </div>
