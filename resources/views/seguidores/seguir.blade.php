@@ -41,6 +41,7 @@
         object-fit: cover;
         border: 3px solid #fff;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #f8f9fa; /* Fallback color */
     }
     
     .stats-badge {
@@ -107,16 +108,11 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body text-center py-4">
-                    <!-- Foto de perfil del usuario -->
-                    @if($user->foto_perfil)
-                        <img src="{{ asset('storage/fotos_perfil/' . $user->foto_perfil) }}" 
-                            class="rounded-circle profile-img mb-3" 
-                            alt="Foto de perfil de {{ $user->nombre }}">
-                    @else
-                        <img src="{{ asset('images/x_defecto.jpg') }}" 
-                            class="rounded-circle profile-img mb-3"
-                            alt="Foto de perfil por defecto">
-                    @endif
+                    <!-- Foto de perfil del usuario principal -->
+                    <img src="{{ isset($user->foto_perfil) && $user->foto_perfil ? asset('fotos_perfil/' . $user->foto_perfil) : 											asset('images/x_defecto.jpg') }}" 
+								class="rounded-circle profile-img mb-3" 
+								alt="Foto de perfil de {{ $user->nombre }}"
+								onerror="this.src='{{ asset('images/x_defecto.jpg') }}';this.onerror=null;">
                     
                     <h2 class="mb-2">Seguidores de {{ $user->nombre }}</h2>
                     <p class="text-muted mb-3">{{ $seguidores->total() }} personas siguen a {{ $user->nombre }}</p>
@@ -144,16 +140,11 @@
                 <div class="col-lg-6 col-xl-4 mb-4">
                     <div class="card user-card h-100">
                         <div class="card-body text-center">
-                            <!-- Foto de perfil del seguidor -->
-                            @if($seguidor->foto_perfil)
-                                <img src="{{ asset('storage/fotos_perfil/' . $seguidor->foto_perfil) }}" 
-                                    class="rounded-circle profile-img mb-3" 
-                                    alt="Foto de perfil de {{ $seguidor->nombre }}">
-                            @else
-                                <img src="{{ asset('images/x_defecto.jpg') }}" 
-                                    class="rounded-circle profile-img mb-3"
-                                    alt="Foto de perfil por defecto">
-                            @endif
+                            <!-- Foto de perfil del seguidor con múltiples fallbacks -->
+                            <img src="{{ isset($seguidor->foto_perfil) && $seguidor->foto_perfil ? asset('fotos_perfil/' . $seguidor->foto_perfil) : asset('images/x_defecto.jpg') }}" 
+                                        class="rounded-circle profile-img mb-3" 
+                                        alt="Foto de perfil de {{ $seguidor->nombre }}"
+                                        onerror="this.src='{{ asset('images/x_defecto.jpg') }}';this.onerror=null;">
 
                             <!-- Nombre del seguidor -->
                             <h5 class="card-title mb-2">
@@ -169,7 +160,7 @@
                                 <p class="card-text text-muted small mb-3">Sin descripción</p>
                             @endif
 
-                            <!-- Estadísticas usando contadores optimizados -->
+                            <!-- Estadísticas usando contadores -->
                             <div class="d-flex justify-content-center gap-3 mb-3">
                                 <span class="stats-badge">
                                     <i class="fas fa-utensils me-1"></i>
@@ -231,4 +222,18 @@
         </div>
     @endif
 </div>
+
+<script>
+// Script adicional para manejar errores de carga de imágenes
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('.profile-img');
+    images.forEach(function(img) {
+        img.addEventListener('error', function() {
+            // Si falla la carga, usar imagen por defecto
+            this.src = '{{ asset('images/x_defecto.jpg') }}';
+        });
+    });
+});
+</script>
+
 @endsection
