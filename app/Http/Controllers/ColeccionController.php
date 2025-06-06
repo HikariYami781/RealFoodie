@@ -1,4 +1,6 @@
 <?php
+// 1. ACTUALIZA tu ColeccionController.php - Añade el método helper
+
 namespace App\Http\Controllers;
 
 use App\Models\Coleccion;
@@ -8,33 +10,41 @@ use Illuminate\Support\Facades\Auth;
 
 class ColeccionController extends Controller
 {
-    public function index()
-    {
-        if (!Auth::check()) {
-            return redirect()->route('login');
-        }
-
-        // Cargar colecciones con sus recetas para evitar consultas N+1
-        $colecciones = Auth::user()->colecciones()
-            ->with(['recetas'])
-            ->orderBy('updated_at', 'desc')
-            ->get();
-        
-        return view('colecciones.index', compact('colecciones'));
+	
+	
+	public function index()
+{
+    if (!Auth::check()) {
+        return redirect()->route('login');
     }
     
+    // Obtener las colecciones del usuario autenticado 
+    $colecciones = Coleccion::where('user_id', Auth::id())
+                            ->with(['recetas.user', 'recetas.categoria', 'user'])
+                            ->orderBy('created_at', 'desc')
+                            ->get();
+    
+    // Añadir la URL de la imagen de perfil a cada colección
+    foreach ($colecciones as $coleccion) {
+        if ($coleccion->user) {
+            $coleccion->user->profile_image_url = $this->getProfileImage($coleccion->user);
+        }
+    }
+    
+    return view('colecciones.index', compact('colecciones'));
+}
+
     public function show(Coleccion $coleccion)
     {
-        // Verificar que el usuario actual es el propietario de la colección
-        if (Auth::id() !== $coleccion->user_id) {
-            abort(403, 'No tienes permiso para ver esta colección.');
-        }
         
-        // Cargar las relaciones necesarias
-        $coleccion->load(['recetas.user', 'recetas.categoria']);
+        $coleccion->load(['recetas.user', 'recetas.categoria', 'user']);
+        // Verificar si el usuario actual es el propietario
+        $isOwner = Auth::check() && Auth::id() === $coleccion->user_id;
+        $coleccion->user->profile_image_url = $this->getProfileImage($coleccion->user);
         
-        return view('colecciones.show', compact('coleccion'));
+        return view('colecciones.show', compact('coleccion', 'isOwner'));
     }
+
     
     public function create()
     {
@@ -44,6 +54,7 @@ class ColeccionController extends Controller
         
         return view('colecciones.create');
     }
+
     
     public function store(Request $request)
     {
@@ -65,7 +76,6 @@ class ColeccionController extends Controller
         $coleccion->user_id = Auth::id();
         $coleccion->save();
         
-        // Si viene el parámetro para añadir receta automáticamente
         if ($request->has('add_recipe_automatically') && !empty($validatedData['receta_id'])) {
             $receta = Receta::find($validatedData['receta_id']);
             
@@ -78,7 +88,6 @@ class ColeccionController extends Controller
             }
         }
         
-        // Si es una creación normal (desde formulario de crear colección)
         if ($request->expectsJson() || $request->has('add_recipe_automatically')) {
             return redirect()->back()->with('success', "Colección '{$coleccion->nombre}' creada correctamente.");
         }
@@ -86,6 +95,7 @@ class ColeccionController extends Controller
         return redirect()->route('colecciones.show', $coleccion)
                         ->with('success', 'Colección creada correctamente.');
     }
+    
     
     public function edit(Coleccion $coleccion)
     {
@@ -95,6 +105,7 @@ class ColeccionController extends Controller
         
         return view('colecciones.edit', compact('coleccion'));
     }
+    
     
     public function update(Request $request, Coleccion $coleccion)
     {
@@ -112,6 +123,7 @@ class ColeccionController extends Controller
         return redirect()->route('colecciones.show', $coleccion)
                         ->with('success', 'Colección actualizada correctamente.');
     }
+
     
     public function destroy(Coleccion $coleccion)
     {
@@ -125,6 +137,7 @@ class ColeccionController extends Controller
         return redirect()->route('colecciones.index')
                         ->with('success', "Colección '{$nombreColeccion}' eliminada correctamente.");
     }
+
     
     public function addReceta(Request $request, Coleccion $coleccion)
     {
@@ -143,7 +156,7 @@ class ColeccionController extends Controller
         if (!$receta) {
             return back()->with('error', 'La receta no existe.');
         }
-        
+
         // Verificar si ya está en la colección
         if (!$coleccion->recetas()->where('receta_id', $recetaId)->exists()) {
             $coleccion->recetas()->attach($recetaId);
@@ -156,6 +169,8 @@ class ColeccionController extends Controller
         
         return back()->with($type, $message);
     }
+
+    
     
     public function removeReceta(Coleccion $coleccion, Receta $receta)
     {
@@ -172,5 +187,25 @@ class ColeccionController extends Controller
         }
         
         return back()->with('success', $message);
+    }
+	
+	
+    /**
+     * Helper method para obtener la imagen de perfil o la por defecto
+     */
+    private function getProfileImage($user)
+    {
+        if ($user->foto_perfil && file_exists(storage_path('app/public/fotos_perfil/' . $user->foto_perfil))) {
+            return asset('storage/fotos_perfil/' . $user->foto_perfil);
+        }
+        
+        // Verifica que la imagen por defecto existe
+        $defaultImage = public_path('images/x_defecto.jpg');
+        if (file_exists($defaultImage)) {
+            return asset('images/x_defecto.jpg');
+        }
+        
+        // Fallback a una imagen en línea si no existe localmente
+        return 'https://via.placeholder.com/50x50/007bff/ffffff?text=' . substr($user->nombre, 0, 1);
     }
 }
